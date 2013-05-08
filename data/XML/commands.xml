@@ -30,7 +30,6 @@
 	<command cmd="/addskill" group="2" acctype="5" log="yes"/>
 	<command cmd="/ban" group="1" acctype="3" log="yes"/>
 	<command cmd="/unban" group="1" acctype="4" log="yes"/>
-	<command cmd="/clean" group="2" acctype="5" log="yes"/>
 	<command cmd="/mccheck" group="2" acctype="5" log="yes"/>
 	<command cmd="/serverdiag" group="2" acctype="5" log="yes"/>
 

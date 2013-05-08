@@ -2429,32 +2429,57 @@ void Player::death()
 		sendStats();
 		sendSkills();
 		sendReLoginWindow(unfairFightReduction);
-	}
 
-	if(getSkull() == SKULL_BLACK)
-	{
-		health = 40;
-		mana = 0;
-	}
-	else
-		health = healthMax;
-
-	if(skillLoss)
-		mana = manaMax;
-
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
-	{
-		if((*it)->isPersistent())
+		if(getSkull() == SKULL_BLACK)
 		{
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_DEATH);
-			onEndCondition(condition->getType());
-			delete condition;
+			health = 40;
+			mana = 0;
 		}
 		else
-			++it;
+		{
+			health = healthMax;
+			mana = manaMax;
+		}
+
+		for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+		{
+			Condition* condition = *it;
+			if(condition->isPersistent())
+			{
+				it = conditions.erase(it);
+
+				condition->endCondition(this, CONDITIONEND_DEATH);
+				onEndCondition(condition->getType());
+				delete condition;
+			}
+			else
+				++it;
+		}
+	}
+	else
+	{
+		setLossSkill(true);
+		for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+		{
+			Condition* condition = *it;
+			if(condition->isPersistent())
+			{
+				it = conditions.erase(it);
+
+				condition->endCondition(this, CONDITIONEND_DEATH);
+				onEndCondition(condition->getType());
+				delete condition;
+			}
+			else
+				++it;
+		}
+
+		health = healthMax;
+		g_game.internalTeleport(this, getTemplePosition(), true);
+		g_game.addCreatureHealth(this);
+		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		onIdleStatus();
+		sendStats();
 	}
 }
 
@@ -2463,12 +2488,6 @@ bool Player::dropCorpse()
 	if(getZone() == ZONE_PVP)
 	{
 		setDropLoot(true);
-		setLossSkill(true);
-		sendStats();
-		g_game.internalTeleport(this, getTemplePosition(), true);
-		g_game.addCreatureHealth(this);
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
-		onIdleStatus();
 		return false;
 	}
 	return Creature::dropCorpse();

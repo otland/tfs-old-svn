@@ -18,7 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
- 
+
 #include "definitions.h"
 #include "npc.h"
 #include "game.h"
@@ -36,9 +36,9 @@
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
- 
+
 #include "luascript.h"
- 
+
 extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
@@ -62,7 +62,7 @@ void Npcs::reload()
 	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
 		it->second->reload();
 }
- 
+
 Npc* Npc::createNpc(const std::string& name)
 {
 	Npc* npc = new Npc(name);
@@ -79,10 +79,10 @@ Npc::Npc(const std::string& _name) :
 {
 	m_filename = "data/npc/" + _name + ".xml";
 	loaded = false;
- 
+
 	m_npcEventHandler = NULL;
 	reset();
- 
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	npcCount++;
 #endif
@@ -91,7 +91,7 @@ Npc::Npc(const std::string& _name) :
 Npc::~Npc()
 {
 	reset();
- 
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	npcCount--;
 #endif
@@ -101,7 +101,7 @@ bool Npc::load()
 {
 	if(isLoaded())
 		return true;
- 
+
 	reset();
 
 	if(!m_scriptInterface)
@@ -113,7 +113,7 @@ bool Npc::load()
 	loaded = loadFromXml(m_filename);
 	return isLoaded();
 }
- 
+
 void Npc::reset()
 {
 	loaded = false;
@@ -129,10 +129,10 @@ void Npc::reset()
 	idleTimeout = 0;
 	lastResponseTime = OTSYS_TIME();
 	defaultPublic = true;
- 
+
 	delete m_npcEventHandler;
 	m_npcEventHandler = NULL;
- 
+
 	for(ResponseList::iterator it = responseList.begin(); it != responseList.end(); ++it)
 		delete *it;
 
@@ -147,12 +147,12 @@ void Npc::reset()
 	responseScriptMap.clear();
 	shopPlayerList.clear();
 }
- 
+
 void Npc::reload()
 {
 	reset();
 	load();
- 
+
 	//Simulate that the creature is placed on the map again.
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureAppear(this);
@@ -168,7 +168,7 @@ bool Npc::loadFromXml(const std::string& filename)
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
- 
+
 		if(xmlStrcmp(root->name,(const xmlChar*)"npc") != 0)
 		{
 			std::cerr << "Malformed XML" << std::endl;

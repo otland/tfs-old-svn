@@ -78,7 +78,6 @@ class Commands
 		void unban(Player* player, const std::string& cmd, const std::string& param);
 		void joinGuild(Player* player, const std::string& cmd, const std::string& param);
 		void createGuild(Player* player, const std::string& cmd, const std::string& param);
-		void clean(Player* player, const std::string& cmd, const std::string& param);
 		void serverDiag(Player* player, const std::string& cmd, const std::string& param);
 		void ghost(Player* player, const std::string& cmd, const std::string& param);
 		void multiClientCheck(Player* player, const std::string& cmd, const std::string& param);

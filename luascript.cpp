@@ -1923,6 +1923,9 @@ void LuaScriptInterface::registerFunctions()
 	//cleanMap()
 	lua_register(m_luaState, "cleanMap", LuaScriptInterface::luaCleanMap);
 
+	//cleanTile(pos[, forceMapLoaded = false])
+	lua_register(m_luaState, "cleanTile", LuaScriptInterface::luaCleanTile);
+
 	//getPlayersByAccountNumber(accountNumber)
 	lua_register(m_luaState, "getPlayersByAccountNumber", LuaScriptInterface::luaGetPlayersByAccountNumber);
 
@@ -7983,6 +7986,7 @@ int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
 
 int32_t LuaScriptInterface::luaRefreshMap(lua_State* L)
 {
+ 	//refreshMap()
 	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::refreshMap, &g_game)));
 	lua_pushboolean(L, true);
@@ -7991,8 +7995,44 @@ int32_t LuaScriptInterface::luaRefreshMap(lua_State* L)
 
 int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
 {
-	g_dispatcher.addTask(
-		createTask(boost::bind(&Game::cleanMap, &g_game)));
+ 	//cleanMap()
+	uint32_t count = 0;
+	g_game.cleanMapEx(count);
+	lua_pushnumber(L, count);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaCleanTile(lua_State* L)
+{
+	//doCleanTile(pos, forceMapLoaded = false)
+	//Remove all items from tile, ignore creatures
+	bool forceMapLoaded = false;
+	if(lua_gettop(L) > 1)
+		forceMapLoaded = popNumber(L);
+
+	PositionEx pos;
+	popPosition(L, pos);
+
+	Tile* tile = g_game.getTile(pos);
+	if(!tile)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	for(int32_t i = tile->getThingCount() - 1; i >= 1; --i) //ignore ground
+	{
+		if(Thing* thing = tile->__getThing(i))
+		{
+			if(Item* item = thing->getItem())
+			{
+				if(!item->isLoadedFromMap() || forceMapLoaded)
+					g_game.internalRemoveItem(item);
+			}
+		}
+	}
+
 	lua_pushboolean(L, true);
 	return 1;
 }

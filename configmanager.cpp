@@ -110,6 +110,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[MARKET_ENABLED] = booleanString(getGlobalString(L, "marketEnabled", "yes"));
 	m_confBoolean[MARKET_PREMIUM] = booleanString(getGlobalString(L, "premiumToCreateMarketOffer", "yes"));
 	m_confBoolean[STAMINA_SYSTEM] = booleanString(getGlobalString(L, "staminaSystem", "yes"));
+    m_confBoolean[STORE_TRASH] = booleanString(getGlobalString(L, "storeTrash", "yes"));
+    m_confBoolean[CLEAN_PROTECTED_ZONES] = booleanString(getGlobalString(L, "cleanProtectedZones", "no"));
 
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confString[MAP_STORAGE_TYPE] = getGlobalString(L, "mapStorageType", "relational");

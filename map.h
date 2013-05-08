@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
- 
+
 #ifndef __OTSERV_MAP_H__
 #define __OTSERV_MAP_H__
 
@@ -27,11 +27,11 @@
 
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
- 
+
 #include "position.h"
 #include "item.h"
 #include "fileloader.h"
- 
+
 #include "tools.h"
 #include "tile.h"
 #include "waypoints.h"
@@ -63,7 +63,7 @@ class AStarNodes
 	public:
 		AStarNodes();
 		~AStarNodes() {}
- 
+
 		AStarNode* createOpenNode();
 		AStarNode* getBestNode();
 		void closeNode(AStarNode* node);
@@ -77,13 +77,13 @@ class AStarNodes
 			const Tile* neighbourTile, const Position& neighbourPos);
 		static int32_t getTileWalkCost(const Creature* creature, const Tile* tile);
 		int32_t getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
- 
+
 	private:
 		AStarNode nodes[MAX_NODES];
 		std::bitset<MAX_NODES> openNodes;
 		uint32_t curNode;
 };
- 
+
 template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 {
 	public:
@@ -92,7 +92,7 @@ template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 
 typedef OTSERV_HASH_SET<Creature*> SpectatorVec;
 typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
- 
+
 #define FLOOR_BITS 3
 #define FLOOR_SIZE (1 << FLOOR_BITS)
 #define FLOOR_MASK (FLOOR_SIZE - 1)
@@ -102,7 +102,7 @@ struct Floor
 	Floor();
 	Tile* tiles[FLOOR_SIZE][FLOOR_SIZE];
 };
- 
+
 class FrozenPathingConditionCall;
 class QTreeLeafNode;
 
@@ -116,14 +116,14 @@ class QTreeNode
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
 		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);
- 
+
 	protected:
 		bool m_isLeaf;
 		QTreeNode* m_child[4];
- 
+
 		friend class Map;
 };
- 
+
 class QTreeLeafNode : public QTreeNode
 {
 	public:
@@ -135,10 +135,10 @@ class QTreeLeafNode : public QTreeNode
 
 		QTreeLeafNode* stepSouth(){return m_leafS;}
 		QTreeLeafNode* stepEast(){return m_leafE;}
- 
+
 		void addCreature(Creature* c);
 		void removeCreature(Creature* c);
- 
+
 	protected:
 		static bool newLeaf;
 		QTreeLeafNode* m_leafS;
@@ -155,7 +155,7 @@ class QTreeLeafNode : public QTreeNode
   * Map class.
   * Holds all the actual map-data
   */
- 
+
 class Map
 {
 	public:
@@ -186,8 +186,6 @@ class Map
 		  */
 		Tile* getTile(int32_t x, int32_t y, int32_t z);
 		Tile* getTile(const Position& pos);
-
-		uint32_t clean();
 
 		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y){ return root.getLeaf(x, y);}
 

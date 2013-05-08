@@ -86,6 +86,7 @@ enum LightState_t
 
 typedef std::map<int32_t, int32_t> StageList;
 typedef std::vector<std::string> StatusList;
+typedef std::list<Position> Trash;
 
 /**
   * Main Game class.
@@ -500,7 +501,11 @@ class Game
 		void saveGameState();
 		void loadGameState();
 		void refreshMap();
-		void cleanMap() {map->clean();}
+
+		void cleanMapEx(uint32_t& count);
+		void cleanMap();
+
+		void addTrash(Position pos) {trash.push_back(pos);}
 
 		//Events
 		void checkCreatureWalk(uint32_t creatureId);
@@ -607,6 +612,7 @@ class Game
 
 		ServiceManager* services;
 		Map* map;
+        Trash trash;
 
 		void savePlayersRecord();
 		std::string lastMotdText;

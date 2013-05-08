@@ -267,6 +267,158 @@ int32_t Game::loadMap(const std::string& filename)
 	return map->loadMap("data/world/" + filename + ".otbm");
 }
 
+void Game::cleanMapEx(uint32_t& count)
+{
+	uint64_t start = OTSYS_TIME();
+	uint32_t tiles = 0; count = 0;
+	int32_t marked = -1;
+
+	if(gameState == GAME_STATE_NORMAL)
+		setGameState(GAME_STATE_MAINTAIN);
+
+	Tile* tile = NULL;
+	ItemVector::iterator tit;
+	if(g_config.getBoolean(ConfigManager::STORE_TRASH))
+	{
+		marked = trash.size();
+	 	Trash::iterator it = trash.begin();
+	 	if(g_config.getBoolean(ConfigManager::CLEAN_PROTECTED_ZONES))
+	 	{
+		 	for(; it != trash.end(); ++it)
+		 	{
+			 	if(!(tile = getTile(*it)))
+			 		continue;
+
+			 	tile->resetFlag(TILESTATE_TRASHED);
+			 	if(tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList());
+			 		continue;
+
+			 	++tiles;
+			 	tit = tile->getItemList()->begin();
+			 	while(tile->getItemList() && tit != tile->getItemList()->end())
+			 	{
+				 	if((*tit)->isCleanable())
+				 	{
+					 	internalRemoveItem(*tit);
+					 	if(tile->getItemList())
+					 		tit = tile->getItemList()->begin();
+
+					 	++count;
+					}
+					else
+						++tit;
+				}
+			}
+		}
+		else
+		{
+			for(; it != trash.end(); ++it)
+			{
+			 	if(!(tile = getTile(*it)))
+			 		continue;
+
+				tile->resetFlag(TILESTATE_TRASHED);
+				if(tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+					continue;
+
+				++tiles;
+				tit = tile->getItemList()->begin();
+				while(tile->getItemList() && tit != tile->getItemList()->end())
+				{
+				 	if((*tit)->isCleanable())
+				 	{
+					 	internalRemoveItem(*tit);
+					 	if(tile->getItemList())
+					 		tit = tile->getItemList()->begin();
+
+					 	++count;
+					}
+					else
+						++tit;
+				}
+			}
+		}
+
+		trash.clear();
+	}
+	else if(g_config.getBoolean(ConfigManager::CLEAN_PROTECTED_ZONES))
+	{
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
+		{
+			for(uint16_t y = 1; y <= map->mapHeight; y++)
+			{
+				for(uint16_t x = 1; x <= map->mapWidth; x++)
+				{
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
+					{
+						if((*tit)->isCleanable())
+						{
+							internalRemoveItem(*tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
+						}
+						else
+							++tit;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		for(uint16_t z = 0; z < (uint16_t)MAP_MAX_LAYERS; z++)
+		{
+			for(uint16_t y = 1; y <= map->mapHeight; y++)
+			{
+				for(uint16_t x = 1; x <= map->mapWidth; x++)
+				{
+					if(!(tile = getTile(x, y, z)) || tile->hasFlag(TILESTATE_PROTECTIONZONE) || !tile->getItemList())
+						continue;
+
+					++tiles;
+					tit = tile->getItemList()->begin();
+					while(tile->getItemList() && tit != tile->getItemList()->end())
+					{
+						if((*tit)->isCleanable())
+						{
+							internalRemoveItem(*tit);
+							if(tile->getItemList())
+								tit = tile->getItemList()->begin();
+
+							++count;
+						}
+						else
+							++tit;
+					}
+				}
+			}
+		}
+	}
+
+	if(gameState == GAME_STATE_MAINTAIN)
+		setGameState(GAME_STATE_NORMAL);
+
+	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "")
+		<< " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+	if(marked >= 0)
+		std::cout << " (" << marked << " were marked)";
+
+	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+}
+
+void Game::cleanMap()
+{
+	uint32_t dummy;
+	cleanMapEx(dummy);
+}
+
 void Game::refreshMap()
 {
 	Tile* tile;
@@ -3440,6 +3592,17 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			lookDistance += 15;
 	}
 
+	bool deny = false;
+	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
+	for(CreatureEventList::const_iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
+	{
+		if(!(*it)->executeOnLook(player, thing, thingPos, stackPos, lookDistance))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
+
 	std::ostringstream ss;
 	ss << "You see " << thing->getDescription(lookDistance);
 	if(player->isAccessPlayer())
@@ -5147,7 +5310,7 @@ void Game::serverSave()
 
 		//clean map if configured to
 		if(g_config.getBoolean(ConfigManager::CLEAN_MAP_AT_SERVERSAVE))
-			map->clean();
+			cleanMap();
 
 		//reset variables
 		for(int16_t i = 0; i < 3; i++)

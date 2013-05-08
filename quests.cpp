@@ -17,20 +17,20 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
- 
+
 #include "otpch.h"
 
 #include <sstream>
 
 #include "quests.h"
 #include "tools.h"
- 
+
 MissionState::MissionState(const std::string& _description, int32_t _missionID)
 {
 	description = _description;
  	missionID = _missionID;
 }
- 
+
 Mission::Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue, bool _ignoreEndValue)
 {
 	missionName = _missionName;
@@ -95,7 +95,7 @@ std::string Mission::getDescription(Player* player)
 	}
 	return "An error has occurred, please contact a gamemaster.";
 }
- 
+
 bool Mission::isStarted(Player* player) const
 {
 	if(!player)
@@ -104,16 +104,16 @@ bool Mission::isStarted(Player* player) const
 	int32_t value;
 	if(!player->getStorageValue(storageID, value))
 		return false;
- 
+
 	if(value < startValue)
 		return false;
- 
+
 	if(!ignoreEndValue && value > endValue)
 		return false;
 
 	return true;
 }
- 
+
 bool Mission::isCompleted(Player* player) const
 {
 	if(!player)
@@ -122,7 +122,7 @@ bool Mission::isCompleted(Player* player) const
 	int32_t value;
 	if(!player->getStorageValue(storageID, value))
 		return false;
- 
+
 	if(ignoreEndValue)
 		return value >= endValue;
 
@@ -133,10 +133,10 @@ std::string Mission::getName(Player* player)
 {
 	if(isCompleted(player))
 		return missionName + " (completed)";
- 
+
 	return missionName;
 }
- 
+
 Quest::Quest(const std::string& _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue)
 {
 	name = _name;
@@ -144,7 +144,7 @@ Quest::Quest(const std::string& _name, uint16_t _id, int32_t _startStorageID, in
 	startStorageID = _startStorageID;
 	startStorageValue = _startStorageValue;
 }
- 
+
 Quest::~Quest()
 {
 	for(MissionsList::iterator it = missions.begin(), end = missions.end(); it != end; ++it)
@@ -163,7 +163,7 @@ uint16_t Quest::getMissionsCount(Player* player) const
 	}
 	return count;
 }
- 
+
 bool Quest::isCompleted(Player* player)
 {
 	for(MissionsList::const_iterator it = missions.begin(), end = missions.end(); it != end; ++it)
@@ -173,7 +173,7 @@ bool Quest::isCompleted(Player* player)
 	}
 	return true;
 }
- 
+
 bool Quest::isStarted(Player* player) const
 {
 	if(!player)
@@ -185,7 +185,7 @@ bool Quest::isStarted(Player* player) const
 
 	return true;
 }
- 
+
 Quests::Quests()
 {
 	//

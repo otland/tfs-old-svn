@@ -104,7 +104,6 @@ s_defcommands Commands::defined_commands[] =
 	{"/ban", &Commands::ban},
 	{"/unban", &Commands::unban},
 	{"/ghost", &Commands::ghost},
-	{"/clean", &Commands::clean},
 	{"/mccheck", &Commands::multiClientCheck},
 	{"/serverdiag", &Commands::serverDiag},
 
@@ -1383,19 +1382,6 @@ void Commands::playerKills(Player* player, const std::string& cmd, const std::st
 	}
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You do not have any unjustified frag.");
-}
-
-void Commands::clean(Player* player, const std::string& cmd, const std::string& param)
-{
-	uint32_t count = g_game.getMap()->clean();
-	if(count != 1)
-	{
-		std::ostringstream ss;
-		ss << "Cleaned " << count << " items from the map.";
-		g_game.broadcastMessage(ss.str(), MSG_STATUS_WARNING);
-	}
-	else
-		g_game.broadcastMessage("Cleaned 1 item from the map.", MSG_STATUS_WARNING);
 }
 
 void Commands::serverDiag(Player* player, const std::string& cmd, const std::string& param)

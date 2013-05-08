@@ -633,6 +633,7 @@ class LuaScriptInterface
 		static int32_t luaSaveServer(lua_State* L);
 		static int32_t luaRefreshMap(lua_State* L);
 		static int32_t luaCleanMap(lua_State* L);
+		static int32_t luaCleanTile(lua_State* L);
 
 		static int32_t luaDoSendTutorial(lua_State* L);
 		static int32_t luaDoAddMark(lua_State* L);

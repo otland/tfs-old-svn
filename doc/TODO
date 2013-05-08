@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.15
+		0.2.15 (Custom)
 
 	Codenamed
 		"Mystic Spirit"
@@ -16,5 +16,5 @@
 ]
 
 [ LIST
-	Compatibility with 0.3 scripts
+	Compatibility with 0.3 scripts.
 ]

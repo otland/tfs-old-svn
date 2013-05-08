@@ -1,5 +1,36 @@
 -- The Forgotten Server Config
 
+	-- Database
+	-- You can use: sqlite or mysql types.
+	sqlType = "sqlite"
+	mysqlHost = "localhost"
+	mysqlUser = "root"
+	mysqlPass = ""
+	mysqlPort = 3306
+	passwordType = "plain"
+	mysqlDatabase = "theforgottenserver"
+	sqliteDatabase = "forgottenserver.s3db"
+
+	-- Connection Config
+	ip = "127.0.0.1"
+	bindOnlyGlobalAddress = "no"
+	loginProtocolPort = 7171
+	gameProtocolPort = 7172
+	adminProtocolPort = 7171
+	statusProtocolPort = 7171
+	loginTries = 10
+	retryTimeout = 5 * 1000
+	loginTimeout = 60 * 1000
+	maxPlayers = "1000"
+	motd = "Welcome to the Forgotten Server!"
+	onePlayerOnlinePerAccount = "yes"
+	allowClones = "no"
+	serverName = "Forgotten"
+	loginMessage = "Welcome to the Forgotten Server!"
+	adminLogsEnabled = "no"
+	statusTimeout = 5 * 60 * 1000
+	replaceKickOnLogin = "yes"
+
 	-- Account Manager
 	accountManager = "yes"
 	newPlayerChooseVoc = "no"
@@ -35,26 +66,6 @@
 
 	-- Commands
 	displayGamemastersWithOnlineCommand = "no"
-
-	-- Connection Config
-	ip = "127.0.0.1"
-	bindOnlyGlobalAddress = "no"
-	loginProtocolPort = 7171
-	gameProtocolPort = 7172
-	adminProtocolPort = 7171
-	statusProtocolPort = 7171
-	loginTries = 10
-	retryTimeout = 5 * 1000
-	loginTimeout = 60 * 1000
-	maxPlayers = "1000"
-	motd = "Welcome to the Forgotten Server!"
-	onePlayerOnlinePerAccount = "yes"
-	allowClones = "no"
-	serverName = "Forgotten"
-	loginMessage = "Welcome to the Forgotten Server!"
-	adminLogsEnabled = "no"
-	statusTimeout = 5 * 60 * 1000
-	replaceKickOnLogin = "yes"
 
 	-- Death
 	-- note: Leave deathLosePercent as -1 if you want to use Tibia's
@@ -97,13 +108,6 @@
 	-- Messaging
 	maxMessageBuffer = 4
 
-	-- MySQL
-	mysqlHost = "localhost"
-	mysqlUser = "root"
-	mysqlPass = ""
-	mysqlDatabase = "theforgottenserver"
-	mysqlPort = 3306
-
 	-- Premium Account
 	freePremium = "no"
 
@@ -129,6 +133,11 @@
 	shutdownAtServerSave = "yes"
 	cleanMapAtServerSave = "yes"
 
+	-- Clean
+	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
+	storeTrash = "yes"
+	cleanProtectedZones = "no"
+
 	-- Server saving
 	autoSaveEachMinutes = 15
 	saveGlobalStorage = "no"
@@ -139,13 +148,6 @@
 
 	-- Stamina
 	staminaSystem = "yes"
-
-	-- SQLite
-	sqliteDatabase = "forgottenserver.s3db"
-
-	-- SQL
-	sqlType = "sqlite"
-	passwordType = "plain"
 
 	-- Startup
 	defaultPriority = "high"

@@ -1,13 +1,13 @@
 [ CHANGELOG
 	Project Name
 		The Forgotten Server
- 
+
 	Version
-		0.2.15
- 
+		0.2.15 (Custom)
+
 	Codenamed
 		"Mystic Spirit"
- 
+
 	License
 		GNU GPLv2
 
@@ -20,22 +20,24 @@
 	M = Modified.
 	A = Added.
 
-	M The Forgotten Server.exe
-	  data/
-	M   global.lua
-	M 	actions/actions.xml
-	M   creaturescripts/scripts/firstitems.lua
-	    items/
-	M     items.otb
-	M     items.xml
-	M   movements/scripts/snow.lua
-	M   npc/lib/npcsystem/modules.lua
-	    XML/
-	M     mounts.xml
-	M     outfits.xml
+	M [ 
+		The Forgotten Server.exe
+		config.lua file
+		data/XML/commands.xml
+	]
+
+	A [ 
+		data/talkactions/scripts/clean.lua
+	]
 ]
 
-[ Milestone
+[ Custom Charges
+	New cleaning system a lot of faster and configurable at config.lua.
+	New lua function cleanTile(pos[, forceMapLoaded = false]).
+	New creature event onLook(cid, thing, position, lookDistance).
+]
+
+[ The Forgotten Server Charges
 	Game protocol 9.80-9.86 support with new items.otb.
 	Offline training!
 	New VIP list code with VIP entries stored on the server side.

@@ -81,8 +81,8 @@ class GlobalEvent : public Event
 
 		uint32_t getInterval() const {return m_interval;}
 
-		time_t getNextExecution() const {return m_nextExecution;}
-		void setNextExecution(time_t time) {m_nextExecution = time;}
+		int64_t getNextExecution() const {return m_nextExecution;}
+		void setNextExecution(int64_t time) {m_nextExecution = time;}
 
 	protected:
 		GlobalEvent_t m_eventType;

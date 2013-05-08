@@ -35,9 +35,11 @@
 #include "mailbox.h"
 #include "combat.h"
 #include "movement.h"
+#include "configmanager.h"
 
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
+extern ConfigManager g_config;
 
 StaticTile real_null_tile(0xFFFF, 0xFFFF, 0xFFFF);
 Tile& Tile::null_tile = real_null_tile;
@@ -993,8 +995,13 @@ void Tile::__addThing(int32_t index, Thing* thing)
 		if(items && items->size() > 0xFFFF)
 			return /*RET_NOTPOSSIBLE*/;
 
-		item->setParent(this);
+		if(g_config.getBoolean(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))
+		{
+		 	g_game.addTrash(tilePos);
+		 	setFlag(TILESTATE_TRASHED);
+		}
 
+		item->setParent(this);
 		if(item->isGroundTile())
 		{
 			if(ground == NULL)
