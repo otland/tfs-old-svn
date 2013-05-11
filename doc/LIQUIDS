@@ -3,10 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.15 (Custom)
-
-	Codenamed
-		"Mystic Spirit"
+		1.0 (Custom)
 
 	License
 		GNU GPLv2
@@ -24,7 +21,7 @@
         11      oil             BROWN
         19      mud             BROWN
         27      rum             BROWN
-		35		tea				BROWN
+        35      tea             BROWN
 
         4       slime           GREEN
 

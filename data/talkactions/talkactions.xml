@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <talkactions>
-	<!-- player talkactions -->
+	<!-- README:
+		The list of Account Types:
+		Aacocunt type Normal = 1
+		Account type Tutor = 2
+		Accout type Senior Tutor = 3
+		Account type Gamemaster = 4
+		Account type GOD = 5
+	
+		The Tags:
+		"log" The logging tag can be used to create logs of commands in data/logs/talkactions.
+
+		"group" The group tag can be used to define which group can use certain command.
+
+		"acctype" The acctype tag is used to define which type of account you can use the command,
+		for example if you want tutors can use any command you must set this way:
+		<talkaction words="/example" acctype="2" function="example"/>
+	-->
+
+	<!-- Players -->
 	<talkaction words="!buypremium" script="buyprem.lua"/>
 	<talkaction words="!leavehouse" script="leavehouse.lua"/>
-	<talkaction words="!save" script="save.lua"/>
 	<talkaction words="!changesex" script="changesex.lua"/>
 	<talkaction words="!uptime" script="uptime.lua"/>
 	<talkaction words="!deathlist" script="deathlist.lua"/>
-	<talkaction words="/clean" script="clean.lua"/>
 
-	<!-- test talkactions -->
-	<talkaction words="!z" script="magiceffect.lua"/>
-	<talkaction words="!x" script="animationeffect.lua"/>
+	<!-- Gamemasters -->
+	<talkaction words="/save" log="yes" group="2" script="save.lua"/>
+	<talkaction words="/clean" log="yes" group="2" script="clean.lua"/>
+
+	<!-- Tutors-->
+	<talkaction words="!z" acctype="2" script="magiceffect.lua"/>
+	<talkaction words="!x" acctype="2" script="animationeffect.lua"/>
 </talkactions>

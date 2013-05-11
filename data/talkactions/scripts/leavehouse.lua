@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if getTileHouseInfo(getPlayerPosition(cid)) ~= FALSE then
 		if getHouseOwner(getTileHouseInfo(getPlayerPosition(cid))) == getPlayerGUID(cid) then
 			setHouseOwner(getTileHouseInfo(getPlayerPosition(cid)), 0)
@@ -11,4 +11,6 @@ function onSay(cid, words, param)
 		doPlayerSendCancel(cid, "You are not inside a house.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	end
+
+	return true
 end

@@ -42,7 +42,6 @@
 #endif
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
-#define STATUS_SERVER_CODENAME "Mystic Spirit"
 #define STATUS_SERVER_PROTOCOL "9.86"
-#define STATUS_SERVER_VERSION "0.2.15 (Custom)"
-#define STATUS_SERVER_DEVELOPERS "Talaturen, Kornholijo, Tryller and Dalkon"
+#define STATUS_SERVER_VERSION "1.0 (Custom)"
+#define STATUS_SERVER_DEVELOPERS "Talaturen, Dalkon, Tryller and Kornholijo"

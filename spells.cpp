@@ -50,65 +50,44 @@ Spells::~Spells()
 	clear();
 }
 
-TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, std::string& words)
+bool Spells::onPlayerSay(Player* player, const std::string& words)
 {
-	std::string str_words = words;
+	std::string reWords = words;
+	trimString(reWords);
 
-	//strip trailing spaces
-	trimString(str_words);
-
-	InstantSpell* instantSpell = getInstantSpell(str_words);
+	InstantSpell* instantSpell = getInstantSpell(reWords);
 	if(!instantSpell)
-		return TALKACTION_CONTINUE;
+		return false;
 
-	std::string param = "";
-	if(instantSpell->getHasParam())
+	size_t size = instantSpell->getWords().length();
+	std::string param = reWords.substr(size, reWords.length() - size), reParam = "";
+	if(instantSpell->getHasParam() && !param.empty() && param[0] == ' ')
 	{
-		size_t spellLen = instantSpell->getWords().length();
-		size_t paramLen = str_words.length() - spellLen;
-		std::string paramText = str_words.substr(spellLen, paramLen);
-		if(!paramText.empty() && paramText[0] == ' ')
+		size_t quote = param.find('"', 1);
+		if(quote != std::string::npos)
 		{
-			size_t loc1 = paramText.find('"', 1);
-			if(loc1 != std::string::npos)
-			{
-				size_t loc2 = paramText.find('"', loc1 + 1);
-				if(loc2 == std::string::npos)
-					loc2 = paramText.length();
-				else if(paramText.find_last_not_of(' ') != loc2)
-					return TALKACTION_CONTINUE;
+			size_t tmp = param.find('"', quote + 1);
+			if(tmp == std::string::npos)
+				tmp = param.length();
 
-				param = paramText.substr(loc1 + 1, loc2 - loc1 - 1);
-			}
-			else
-			{
-				trimString(paramText);
-				loc1 = paramText.find(' ', 0);
-				if(loc1 == std::string::npos)
-					param = paramText;
-				else
-					return TALKACTION_CONTINUE;
-			}
-
-			if(instantSpell->getHasPlayerNameParam() && !param.empty())
-			{
-				Player* playerTarget = NULL;
-				g_game.getPlayerByNameWildcard(param, playerTarget);
-				if(playerTarget)
-					param = playerTarget->getName();
-			}
+			reParam = param.substr(quote + 1, tmp - quote - 1);
 		}
+		else if(param.find(' ', 1) == std::string::npos)
+			reParam = param.substr(1, param.length());
+
+		trimString(reParam);
 	}
 
-	if(instantSpell->playerCastInstant(player, param))
-	{
-		words = instantSpell->getWords();
-		if(instantSpell->getHasParam() && !param.empty())
-			words += " \"" + param + "\"";
+	if(!instantSpell->playerCastInstant(player, reParam))
+		return true;
 
-		return TALKACTION_BREAK;
-	}
-	return TALKACTION_FAILED;
+	SpeakClasses type = SPEAK_SAY;
+
+	reWords = instantSpell->getWords();
+	if(instantSpell->getHasParam())
+		reWords += " \"" + reParam + "\"";
+
+	return g_game.internalCreatureSay(player, type, reWords, player->isInGhostMode());
 }
 
 void Spells::clear()

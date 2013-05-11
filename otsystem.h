@@ -26,6 +26,19 @@
 #include <list>
 #include <vector>
 #include <algorithm>
+#include <string>
+#include <bitset>
+#include <queue>
+#include <set>
+#include <map>
+#include <limits>
+
+#include <boost/utility.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <boost/foreach.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 

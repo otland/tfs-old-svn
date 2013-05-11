@@ -4,9 +4,9 @@ local config = {
 	price = 10000
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if getPlayerPremiumDays(cid) <= config.maxDays then
-		if doPlayerRemoveMoney(cid, config.price) == TRUE then
+		if doPlayerRemoveMoney(cid, config.price) then
 			doPlayerAddPremiumDays(cid, config.days)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have bought " .. config.days .." days of premium account.")
 		else
@@ -17,4 +17,6 @@ function onSay(cid, words, param)
 		doPlayerSendCancel(cid, "You can not buy more than " .. config.maxDays .. " days of Premium Account.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	end
+
+	return true
 end

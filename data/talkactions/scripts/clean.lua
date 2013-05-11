@@ -1,32 +1,30 @@
 local cleanEvent = 0
 
-function onSay(cid, words, param)
-	if getPlayerAccess(cid) ~= 0 then
-		if(param == '') then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. cleanMap() .. " items.")
-			return
-		end
-
-		if(param == 'tile') then
-			local removeLoaded, t = false, string.explode(param, ",")
-			if(t[2]) then
-				removeLoaded = getBooleanFromString(t[2])
-			end
-
-			cleanTile(getCreaturePosition(cid), removeLoaded)
-			return
-		end
-
-		if(not tonumber(param)) then
-			doPlayerSendCancel(cid, "Command requires numeric param.")
-			return
-		end
-
-		stopEvent(cleanEvent)
-		prepareClean(tonumber(param), cid)
-
+function onSay(cid, words, param, channel)
+	if(param == '') then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. cleanMap() .. " items.")
+		return true
 	end
 
+	if(param == 'tile') then
+		local removeLoaded, t = false, string.explode(param, ",")
+		if(t[2]) then
+			removeLoaded = getBooleanFromString(t[2])
+		end
+
+		cleanTile(getCreaturePosition(cid), removeLoaded)
+		return true
+	end
+
+	if(not tonumber(param)) then
+		doPlayerSendCancel(cid, "Command requires numeric param.")
+		return true
+	end
+
+	stopEvent(cleanEvent)
+	prepareClean(tonumber(param), cid)
+
+	return true
 end
 
 function prepareClean(minutes, cid)

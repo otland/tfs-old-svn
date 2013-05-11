@@ -1,14 +1,14 @@
 local savingEvent = 0
 
-function onSay(cid, words, param)
-	if getPlayerAccess(cid) ~= 0 then
-		if isNumber(param) == TRUE then
-			stopEvent(savingEvent)
-			save(tonumber(param) * 60 * 1000)
-		else
-			saveData()
-		end
+function onSay(cid, words, param, channel)
+	if (isNumber(param)) then
+		stopEvent(savingEvent)
+		save(tonumber(param) * 60 * 1000)
+	else
+		saveData()
 	end
+
+	return true
 end
 
 function save(delay)

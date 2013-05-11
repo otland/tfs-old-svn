@@ -293,10 +293,10 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	if(command->logged)
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
-		if(dirExists("data/logs") || createDir("data/logs"))
+		if(dirExists("data/logs/commands") || createDir("data/logs/commands"))
 		{
 			std::ostringstream ss;
-			ss << "data/logs/" << player->getName() << " commands.log";
+			ss << "data/logs/commands/" << player->getName() << ".log";
 
 			std::ofstream out(ss.str().c_str(), std::ios::app);
 

@@ -3948,7 +3948,10 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	if(playerSayCommand(player, type, text))
 		return true;
 
-	if(playerSaySpell(player, type, text))
+	if(g_spells->onPlayerSay(player, text))
+		return true;
+
+	if(g_talkActions->onPlayerSay(player, channelId, text))
 		return true;
 
 	if(type != SPEAK_PRIVATE_PN)
@@ -4000,25 +4003,6 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 				return true;
 		}
 	}
-	return false;
-}
-
-bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
-{
-	if(player->isAccountManager())
-		return internalCreatureSay(player, SPEAK_SAY, text, false);
-
-	std::string words = text;
-	TalkActionResult_t result = g_talkActions->playerSaySpell(player, type, words);
-	if(result == TALKACTION_BREAK)
-		return true;
-
-	result = g_spells->playerSaySpell(player, type, words);
-	if(result == TALKACTION_BREAK)
-		return internalCreatureSay(player, SPEAK_SAY, words, false);
-	else if(result == TALKACTION_FAILED)
-		return true;
-
 	return false;
 }
 

@@ -22,17 +22,19 @@
 #ifndef __TALKACTION_H__
 #define __TALKACTION_H__
 
-#include <list>
+#include <map>
 #include <string>
 #include "luascript.h"
 #include "baseevents.h"
-#include "const.h"
+#include "creature.h"
+#include "enums.h"
 
-enum TalkActionResult_t
+enum TalkActionFilter
 {
-	TALKACTION_CONTINUE,
-	TALKACTION_BREAK,
-	TALKACTION_FAILED
+	TALKFILTER_QUOTATION,
+	TALKFILTER_WORD,
+	TALKFILTER_WORD_SPACED,
+	TALKFILTER_LAST
 };
 
 class TalkAction;
@@ -43,39 +45,74 @@ class TalkActions : public BaseEvents
 		TalkActions();
 		virtual ~TalkActions();
 
-		TalkActionResult_t playerSaySpell(Player* player, SpeakClasses type, const std::string& words);
+		bool onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
 
 	protected:
-		virtual LuaScriptInterface& getScriptInterface();
 		virtual std::string getScriptBaseName();
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 		virtual void clear();
 
-		typedef std::list< std::pair<std::string, TalkAction* > > TalkActionList;
-		TalkActionList wordsMap;
-
+		virtual LuaScriptInterface& getScriptInterface();
 		LuaScriptInterface m_scriptInterface;
+
+		typedef std::map<std::string, TalkAction*> TalkActionsMap;
+		TalkActionsMap talksMap;
 };
+
+typedef bool (TalkFunction)(Player* player, const std::string& words, const std::string& param);
+struct TalkFunction_t;
 
 class TalkAction : public Event
 {
 	public:
 		TalkAction(LuaScriptInterface* _interface);
-		virtual ~TalkAction();
+		virtual ~TalkAction() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
+		virtual bool loadFunction(const std::string& functionName);
+
+		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel);
 
 		std::string getWords() const {return m_words;}
+		TalkActionFilter getFilter() const {return m_filter;}
 
-		//scripting
-		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
-		//
+		int32_t getGroup() const {return m_groupId;}
+		int32_t getChannel() const {return m_channel;}
+
+		AccountType_t getAccountType() const {return m_accountType;}
+
+		std::string getFunctionName() const {return m_functionName;}
+		TalkFunction* getFunction() {return m_function;}
+
+		bool isLogged() const {return m_logged;}
+		bool isSensitive() const {return m_sensitive;}
 
 	protected:
+		static TalkFunction_t definedFunctions[];
 		virtual std::string getScriptEventName();
 
+		//static TalkFunction newType;
+
 		std::string m_words;
+		std::string m_functionName;
+
+		TalkFunction* m_function;
+
+		TalkActionFilter m_filter;
+		AccountType_t m_accountType;
+
+		int32_t m_groupId;
+		int32_t m_channel;
+
+		bool m_logged;
+		bool m_sensitive;
+};
+
+struct TalkFunction_t
+{
+	const char* name;
+	TalkFunction* callback;
 };
 
 #endif

@@ -1,6 +1,6 @@
 dofile("./config.lua")
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if sqlType == "mysql" then
 		env = luasql.mysql()
 		sql = env:connect(mysqlDatabase, mysqlUser, mysqlPass, mysqlHost, mysqlPort)
@@ -47,4 +47,6 @@ function onSay(cid, words, param)
 	end
 	sql:close()
 	env:close()
+
+	return true
 end

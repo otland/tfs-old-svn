@@ -556,7 +556,6 @@ class Game
 
 	protected:
 		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);
-		bool playerSaySpell(Player* player, SpeakClasses type, const std::string& text);
 		bool playerWhisper(Player* player, const std::string& text);
 		bool playerYell(Player* player, const std::string& text);
 		bool playerSpeakTo(Player* player, SpeakClasses type, const std::string& receiver, const std::string& text);

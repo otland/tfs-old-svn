@@ -3,10 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.15 (Custom)
-
-	Codenamed
-		"Mystic Spirit"
+		1.0 (Custom)
 
 	License
 		GNU GPLv2
@@ -35,9 +32,8 @@
 		Kornholijo
 			C++ Programmer
 
-		Tryller
+		Elf
 			C++ Programmer
-			Data Directory Manager
 ]
 
 [ LICENSE

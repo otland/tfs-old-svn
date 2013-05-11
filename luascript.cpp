@@ -8008,7 +8008,7 @@ int32_t LuaScriptInterface::luaCleanTile(lua_State* L)
 	//Remove all items from tile, ignore creatures
 	bool forceMapLoaded = false;
 	if(lua_gettop(L) > 1)
-		forceMapLoaded = popNumber(L);
+		forceMapLoaded = popBoolean(L);
 
 	PositionEx pos;
 	popPosition(L, pos);
