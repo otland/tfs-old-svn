@@ -24,14 +24,16 @@
 		data/XML/commands.xml
 
 		data/talkactions/
-			animationeffect.lua
-			buyprem.lua
-			changesex.lua
-			deathlist.lua
-			leavehouse.lua
-			magiceffect.lua
-			save.lua
-			uptime.lua
+			talkactions.xml
+			scripts/
+				animationeffect.lua
+				buyprem.lua
+				changesex.lua
+				deathlist.lua
+				leavehouse.lua
+				magiceffect.lua
+				save.lua
+				uptime.lua
 	]
 
 	A [ 
@@ -45,7 +47,7 @@
 	Updated global.lua with CONST_ME_LAST = CONST_ME_CONFETTI_VERTICAL for new working talkactions.
 	Now logs have separated folders to talkactions and commands.
 	New cleaning system a lot of faster and configurable at config.lua.
-	New lua function cleanTile(pos[, forceMapLoaded = false]).
+	New lua function cleanTile(pos[, forceMapLoaded = false]), getDataDir(), getLogsDir() and getItemInfo(itemid).
 	New creature event onLook(cid, thing, position, lookDistance).
 ]
 

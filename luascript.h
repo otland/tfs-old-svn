@@ -325,6 +325,12 @@ class LuaScriptInterface
 		static int32_t popCallback(lua_State* L);
 		static bool popBoolean(lua_State* L);
 
+		static void createTable(lua_State* L, const char* index);
+		static void createTable(lua_State* L, const char* index, int32_t narr, int32_t nrec);
+		static void createTable(lua_State* L, int32_t index);
+		static void createTable(lua_State* L, int32_t index, int32_t narr, int32_t nrec);
+		static void pushTable(lua_State* L);
+
 		template<class T>
 		static T popNumber(lua_State* L);
 
@@ -335,6 +341,7 @@ class LuaScriptInterface
 		static std::string getFieldString(lua_State* L, const char* key);
 		static void setFieldBool(lua_State* L, const char* index, bool val);
 		static bool getFieldBool(lua_State* L, const char* key);
+		static void setFieldFloat(lua_State* L, const char* index, double val);
 		static std::string escapeString(const std::string& string);
 
 	protected:
@@ -610,6 +617,7 @@ class LuaScriptInterface
 		static int32_t luaGetItemWeight(lua_State* L);
 		static int32_t luaGetItemWeightByUID(lua_State* L);
 		static int32_t luaGetItemIdByName(lua_State* L);
+		static int32_t luaGetItemInfo(lua_State* L);
 		static int32_t luaGetTownId(lua_State* L);
 		static int32_t luaGetTownName(lua_State* L);
 		static int32_t luaGetTownTemplePosition(lua_State* L);
@@ -651,7 +659,6 @@ class LuaScriptInterface
 		static int32_t luaGetPartyMembers(lua_State* L);
 
 		//
-
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
 		#ifndef __LUAJIT__
@@ -689,6 +696,10 @@ class LuaScriptInterface
 		static int32_t luaResultGetAllData(lua_State* L);
 		static int32_t luaResultNext(lua_State* L);
 		static int32_t luaResultFree(lua_State* L);
+
+		// Directories
+		static int32_t luaGetDataDir(lua_State* L);
+		static int32_t luaGetLogsDir(lua_State* L);
 
 		lua_State* m_luaState;
 		std::string m_lastLuaError;
