@@ -872,8 +872,8 @@ void Commands::serverInfo(Player* player, const std::string& cmd, const std::str
 	std::ostringstream text;
 	text << "Server Info:";
 	text << "\nExp Rate: " << g_game.getExperienceStage(player->level);
-	text << "\nSkill Rate: " << g_config.getNumber(ConfigManager::RATE_SKILL);
-	text << "\nMagic Rate: " << g_config.getNumber(ConfigManager::RATE_MAGIC);
+	text << "\nSkill Rate: " << g_config.getDouble(ConfigManager::RATE_SKILL);
+	text << "\nMagic Rate: " << g_config.getDouble(ConfigManager::RATE_MAGIC);
 	text << "\nLoot Rate: " << g_config.getNumber(ConfigManager::RATE_LOOT);
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 }

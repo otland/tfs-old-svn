@@ -21,19 +21,22 @@
 		The Forgotten Server.exe
 		config.lua file
 		data/global.lua
-		data/XML/commands.xml
+
+		data/XML/
+			commands.xml
+			stages.xml
 
 		data/talkactions/
 			talkactions.xml
-			scripts/
-				animationeffect.lua
-				buyprem.lua
-				changesex.lua
-				deathlist.lua
-				leavehouse.lua
-				magiceffect.lua
-				save.lua
-				uptime.lua
+				scripts/
+					animationeffect.lua
+					buyprem.lua
+					changesex.lua
+					deathlist.lua
+					leavehouse.lua
+					magiceffect.lua
+					save.lua
+					uptime.lua
 	]
 
 	A [ 
@@ -42,6 +45,7 @@
 ]
 
 [ Custom Charges
+	Now you can use float values for experience, skill, magic rates and experience stages.
 	Now onSay for talkactions can be used onSay(cid, words, param, channel).
 	Now you can use new tags for talkactions "log", "acctype" "senssitive" and "group".
 	Updated global.lua with CONST_ME_LAST = CONST_ME_CONFETTI_VERTICAL for new working talkactions.

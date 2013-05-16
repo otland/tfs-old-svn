@@ -542,7 +542,7 @@ class Game
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
 		bool loadExperienceStages();
-		uint64_t getExperienceStage(uint32_t level);
+		double getExperienceStage(uint32_t level);
 
 		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
 		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}

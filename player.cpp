@@ -670,7 +670,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 	}
 
 	bool sendUpdateSkills = false;
-	count *= g_config.getNumber(ConfigManager::RATE_SKILL);
+	count *= g_config.getDouble(ConfigManager::RATE_SKILL);
 	while((skills[skill][SKILL_TRIES] + count) >= nextReqTries)
 	{
 		count -= nextReqTries - skills[skill][SKILL_TRIES];
@@ -1999,7 +1999,7 @@ void Player::addManaSpent(uint64_t amount, bool withMultiplier /*= true*/)
 	}
 
 	if(withMultiplier)
-		amount *= g_config.getNumber(ConfigManager::RATE_MAGIC);
+		amount *= g_config.getDouble(ConfigManager::RATE_MAGIC);
 
 	bool sendUpdateStats = false;
 	while((manaSpent + amount) >= nextReqMana)
@@ -3719,7 +3719,7 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 			uint64_t c = getExperience();
 
 			uint64_t result = std::floor(getDamageRatio(attacker) * std::max<double>(0, ((double)(1 - (((double)a / b))))) * 0.05 * c);
-			return (result * g_config.getNumber(ConfigManager::RATE_EXPERIENCE));
+			return (result * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
 		}
 	}
 	return 0;
@@ -5246,7 +5246,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		oldSkillValue = magLevel;
 		oldPercentToNextLevel = (long double)(manaSpent * 100) / nextReqMana;
 
-		tries *= g_config.getNumber(ConfigManager::RATE_MAGIC);
+		tries *= g_config.getDouble(ConfigManager::RATE_MAGIC);
 		uint32_t currMagLevel = magLevel;
 		while((manaSpent + tries) >= nextReqMana)
 		{
@@ -5305,7 +5305,7 @@ bool Player::addOfflineTrainingTries(skills_t skill, int32_t tries)
 		oldSkillValue = skills[skill][SKILL_LEVEL];
 		oldPercentToNextLevel = (long double)(skills[skill][SKILL_TRIES] * 100) / nextReqTries;
 
-		tries *= g_config.getNumber(ConfigManager::RATE_SKILL);
+		tries *= g_config.getDouble(ConfigManager::RATE_SKILL);
 		uint32_t currSkillLevel = skills[skill][SKILL_LEVEL];
 		while((skills[skill][SKILL_TRIES] + tries) >= nextReqTries)
 		{

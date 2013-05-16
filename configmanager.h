@@ -115,10 +115,7 @@ class ConfigManager
 			PZ_LOCKED,
 			DEFAULT_DESPAWNRANGE,
 			DEFAULT_DESPAWNRADIUS,
-			RATE_EXPERIENCE,
-			RATE_SKILL,
 			RATE_LOOT,
-			RATE_MAGIC,
 			RATE_SPAWN,
 			SPAWNPOS_X,
 			SPAWNPOS_Y,
@@ -159,6 +156,14 @@ class ConfigManager
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};
 
+		enum double_config_t
+		{
+			RATE_EXPERIENCE,
+			RATE_SKILL,
+			RATE_MAGIC,
+			LAST_DOUBLE_CONFIG /* this must be the last one */
+		};
+
 		bool loadFile(const std::string& _filename);
 		bool reload();
 
@@ -166,16 +171,19 @@ class ConfigManager
 		int32_t getNumber(integer_config_t _what) const;
 		bool getBoolean(boolean_config_t _what) const;
 		bool setNumber(integer_config_t _what, int32_t _value);
+		double getDouble(uint32_t _what) const;
 
 	private:
 		std::string getGlobalString(lua_State* _L, const std::string& _identifier, const std::string& _default="");
 		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default=0);
 		std::string getGlobalStringField(lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default="");
+		double getGlobalDouble(lua_State* _L, const std::string& _identifier, double _default = 0.0);
 
 		bool m_isLoaded;
 		std::string m_confString[LAST_STRING_CONFIG];
 		int32_t m_confInteger[LAST_INTEGER_CONFIG];
 		bool m_confBoolean[LAST_BOOLEAN_CONFIG];
+		double m_confDouble[LAST_DOUBLE_CONFIG];
 };
 
 #endif

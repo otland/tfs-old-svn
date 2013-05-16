@@ -131,10 +131,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[PZ_LOCKED] = getGlobalNumber(L, "pzLocked", 0);
 	m_confInteger[DEFAULT_DESPAWNRANGE] = getGlobalNumber(L, "deSpawnRange", 2);
 	m_confInteger[DEFAULT_DESPAWNRADIUS] = getGlobalNumber(L, "deSpawnRadius", 50);
-	m_confInteger[RATE_EXPERIENCE] = getGlobalNumber(L, "rateExp", 1);
-	m_confInteger[RATE_SKILL] = getGlobalNumber(L, "rateSkill", 1);
 	m_confInteger[RATE_LOOT] = getGlobalNumber(L, "rateLoot", 1);
-	m_confInteger[RATE_MAGIC] = getGlobalNumber(L, "rateMagic", 1);
 	m_confInteger[RATE_SPAWN] = getGlobalNumber(L, "rateSpawn", 1);
 	m_confInteger[SPAWNPOS_X] = getGlobalNumber(L, "newPlayerSpawnPosX", 100);
 	m_confInteger[SPAWNPOS_Y] = getGlobalNumber(L, "newPlayerSpawnPosY", 100);
@@ -166,6 +163,10 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[CHECK_EXPIRED_MARKET_OFFERS_EACH_MINUTES] = getGlobalNumber(L, "checkExpiredMarketOffersEachMinutes", 60);
 	m_confInteger[MAX_MARKET_OFFERS_AT_A_TIME_PER_PLAYER] = getGlobalNumber(L, "maxMarketOffersAtATimePerPlayer", 100);
 
+	m_confDouble[RATE_EXPERIENCE] = getGlobalDouble(L, "rateExperience", 1);
+	m_confDouble[RATE_SKILL] = getGlobalDouble(L, "rateSkill", 1);
+	m_confDouble[RATE_MAGIC] = getGlobalDouble(L, "rateMagic", 1);
+
 	m_isLoaded = true;
 	lua_close(L);
 	return true;
@@ -177,6 +178,17 @@ bool ConfigManager::reload()
 		return false;
 
 	return loadFile(m_confString[CONFIG_FILE]);
+}
+
+double ConfigManager::getDouble(uint32_t _what) const
+{
+	if(m_isLoaded && _what < LAST_DOUBLE_CONFIG)
+		return m_confDouble[_what];
+	else
+	{
+		std::cout << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
+		return 0;
+	}
 }
 
 const std::string& ConfigManager::getString(string_config_t _what) const
@@ -263,4 +275,19 @@ std::string ConfigManager::getGlobalStringField (lua_State* _L, const std::strin
 	std::string result = lua_tostring(_L, -1);
 	lua_pop(_L, 2);  /* remove number and key*/
 	return result;
+}
+
+double ConfigManager::getGlobalDouble(lua_State* _L, const std::string& _identifier, double _default)
+{
+	lua_getglobal(_L, _identifier.c_str());
+	if(!lua_isnumber(_L, -1))
+	{
+		lua_pop(_L, 1);
+		return _default;
+	}
+
+	double val = lua_tonumber(_L, -1);
+	lua_pop(_L,1);
+
+	return val;
 }

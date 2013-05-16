@@ -290,7 +290,7 @@ void Game::cleanMapEx(uint32_t& count)
 			 		continue;
 
 			 	tile->resetFlag(TILESTATE_TRASHED);
-			 	if(tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList());
+			 	if(tile->hasFlag(TILESTATE_HOUSE) || !tile->getItemList())
 			 		continue;
 
 			 	++tiles;
@@ -5436,10 +5436,10 @@ void Game::loadPlayersRecord()
 	fclose(file);
 }
 
-uint64_t Game::getExperienceStage(uint32_t level)
+double Game::getExperienceStage(uint32_t level)
 {
 	if(!stagesEnabled)
-		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+		return g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
 
 	if(useLastStageLevel && level >= lastStageLevel)
 		return stages[lastStageLevel];
@@ -5453,8 +5453,10 @@ bool Game::loadExperienceStages()
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{
+		int32_t intValue, low, high;
+		float floatValue, mul;
+
 		xmlNodePtr root, p;
-		int32_t intVal, low, high, mult;
 		root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)"stages"))
 		{
@@ -5467,18 +5469,18 @@ bool Game::loadExperienceStages()
 		{
 			if(!xmlStrcmp(p->name, (const xmlChar*)"config"))
 			{
-				if(readXMLInteger(p, "enabled", intVal))
-					stagesEnabled = (intVal != 0);
+				if(readXMLInteger(p, "enabled", intValue))
+					stagesEnabled = (intValue != 0);
 			}
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
 			{
-				if(readXMLInteger(p, "minlevel", intVal))
-					low = intVal;
+				if(readXMLInteger(p, "minlevel", intValue))
+					low = intValue;
 				else
 					low = 1;
 
-				if(readXMLInteger(p, "maxlevel", intVal))
-					high = intVal;
+				if(readXMLInteger(p, "maxlevel", intValue))
+					high = intValue;
 				else
 				{
 					high = 0;
@@ -5486,17 +5488,17 @@ bool Game::loadExperienceStages()
 					useLastStageLevel = true;
 				}
 
-				if(readXMLInteger(p, "multiplier", intVal))
-					mult = intVal;
+				if(readXMLFloat(p, "multiplier", floatValue))
+					mul = floatValue;
 				else
-					mult = 1;
+					mul = 1.0f;
 
 				if(useLastStageLevel)
-					stages[lastStageLevel] = mult;
+					stages[lastStageLevel] = mul;
 				else
 				{
 					for(int32_t iteratorValue = low; iteratorValue <= high; iteratorValue++)
-						stages[iteratorValue] = mult;
+						stages[iteratorValue] = mul;
 				}
 			}
 			p = p->next;

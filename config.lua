@@ -118,10 +118,10 @@
 	experienceByKillingPlayers = "no"
 
 	-- Rates
-	rateExp = 5
-	rateSkill = 3
+	rateExperience = 5.0
+	rateSkill = 3.0
+	rateMagic = 3.0
 	rateLoot = 2
-	rateMagic = 3
 	rateSpawn = 1
 
 	-- Real Server Save
