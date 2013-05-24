@@ -253,10 +253,11 @@ void Container::onRemoveContainerItem(uint32_t index, Item* item)
 
 	//send change to client
 	Player* player = NULL;
+	Item* lastItem = getItem(maxSize);
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((player = (*it)->getPlayer()))
-			player->sendRemoveContainerItem(this, index, item);
+			player->sendRemoveContainerItem(this, index, lastItem);
 	}
 
 	//event methods

@@ -19,7 +19,7 @@
 #define __DEFINITIONS__
 
 #define CLIENT_VERSION_MIN 972
-#define CLIENT_VERSION_MAX 975
+#define CLIENT_VERSION_MAX 978
 #define CLIENT_VERSION_STRING "Only clients with protocol 9.8x allowed!"
 
 #define CLIENT_VERSION_DAT 0

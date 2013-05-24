@@ -1338,7 +1338,7 @@ void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item*)
+void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* lastItem)
 {
 	if(!client)
 		return;
@@ -1346,7 +1346,7 @@ void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, c
 	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
 		if(cl->second == container)
-			client->sendRemoveContainerItem(cl->first, slot);
+			client->sendRemoveContainerItem(cl->first, slot, lastItem);
 	}
 }
 
