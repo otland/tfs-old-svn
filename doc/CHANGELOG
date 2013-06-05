@@ -20,14 +20,15 @@
 	M [ 
 		The Forgotten Server.exe
 		config.lua file
-		data/global.lua
+
+		data/
+			global.lua
 
 		data/XML/
 			commands.xml
 			stages.xml
 
-		data/talkactions/
-			talkactions.xml
+		data/talkactions/talkactions.xml
 				scripts/
 					animationeffect.lua
 					buyprem.lua
@@ -40,19 +41,30 @@
 	]
 
 	A [ 
-		data/talkactions/scripts/clean.lua
+		data/
+			functions.lua
+			compat.lua
+		data/talkactions/
+				scripts/
+					clean.lua
 	]
 ]
 
 [ Custom Charges
+	Added compat and functions lua file.
+	Now getCreatureMana(cid) and cid[, ignoreModifiers = false]) can be used instead of getPlayerMana(cid) and getPlayerMaxMana(cid).
+	Now getCreatureLookDirection(cid) can be used instead of getPlayerLookDir(cid).
+	Removed getPlayerName(cid), you can use getCreatureName(cid).
 	Now you can use float values for experience, skill, magic rates and experience stages.
 	Now onSay for talkactions can be used onSay(cid, words, param, channel).
 	Now you can use new tags for talkactions "log", "acctype" "senssitive" and "group".
 	Updated global.lua with CONST_ME_LAST = CONST_ME_CONFETTI_VERTICAL for new working talkactions.
 	Now logs have separated folders to talkactions and commands.
 	New cleaning system a lot of faster and configurable at config.lua.
-	New lua function cleanTile(pos[, forceMapLoaded = false]), getDataDir(), getLogsDir() and getItemInfo(itemid).
+	New lua function getCreatureHideHealth(cid), doCreatureSetHideHealth(cid, hide), getCreatureLastPosition(cid), cleanTile(pos[, forceMapLoaded = false]), 
+		getDataDir(), getLogsDir() and getItemInfo(itemid).
 	New creature event onLook(cid, thing, position, lookDistance).
+	Corrected mount names.
 ]
 
 [ The Forgotten Server Charges

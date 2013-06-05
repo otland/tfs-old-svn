@@ -1214,20 +1214,23 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureMaxHealth(cid)
 	lua_register(m_luaState, "getCreatureMaxHealth", LuaScriptInterface::luaGetCreatureMaxHealth);
 
-	//getPlayerMana(cid)
-	lua_register(m_luaState, "getPlayerMana", LuaScriptInterface::luaGetPlayerMana);
+	//getCreatureMana(cid)
+	lua_register(m_luaState, "getCreatureMana", LuaScriptInterface::luaGetCreatureMana);
 
-	//getPlayerMaxMana(cid)
-	lua_register(m_luaState, "getPlayerMaxMana", LuaScriptInterface::luaGetPlayerMaxMana);
+	//getCreatureMaxMana(cid[, ignoreModifiers = false])
+	lua_register(m_luaState, "getCreatureMaxMana", LuaScriptInterface::luaGetCreatureMaxMana);
+
+	//getCreatureHideHealth(cid)
+	lua_register(m_luaState, "getCreatureHideHealth", LuaScriptInterface::luaGetCreatureHideHealth);
+
+	//doCreatureSetHideHealth(cid, hide)
+	lua_register(m_luaState, "doCreatureSetHideHealth", LuaScriptInterface::luaDoCreatureSetHideHealth);
 
 	//getPlayerLevel(cid)
 	lua_register(m_luaState, "getPlayerLevel", LuaScriptInterface::luaGetPlayerLevel);
 
 	//getPlayerMagLevel(cid)
 	lua_register(m_luaState, "getPlayerMagLevel", LuaScriptInterface::luaGetPlayerMagLevel);
-
-	//getPlayerName(cid)
-	lua_register(m_luaState, "getPlayerName", LuaScriptInterface::luaGetPlayerName);
 
 	//getPlayerAccess(cid)
 	lua_register(m_luaState, "getPlayerAccess", LuaScriptInterface::luaGetPlayerAccess);
@@ -1286,11 +1289,12 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerSex(cid)
 	lua_register(m_luaState, "getPlayerSex", LuaScriptInterface::luaGetPlayerSex);
 
-	//getPlayerLookDir(cid)
-	lua_register(m_luaState, "getPlayerLookDir", LuaScriptInterface::luaGetPlayerLookDir);
+	//getCreatureLookDirection(cid)
+	lua_register(m_luaState, "getCreatureLookDirection", LuaScriptInterface::luaGetCreatureLookDirection);
 
 	//doCreatureSetLookDir(cid, direction)
 	lua_register(m_luaState, "doCreatureSetLookDir", LuaScriptInterface::luaDoCreatureSetLookDir);
+
 	//doSetCreatureDirection(cid, direction)
 	lua_register(m_luaState, "doSetCreatureDirection", LuaScriptInterface::luaDoCreatureSetLookDir);
 
@@ -1589,11 +1593,9 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "getPartyMembers", LuaScriptInterface::luaGetPartyMembers);
 
 	//getCreatureMaster(cid)
-	//returns the creature's master or itself if the creature isn't a summon
 	lua_register(m_luaState, "getCreatureMaster", LuaScriptInterface::luaGetCreatureMaster);
 
 	//getCreatureSummons(cid)
-	//returns a table with all the summons of the creature
 	lua_register(m_luaState, "getCreatureSummons", LuaScriptInterface::luaGetCreatureSummons);
 
 	//getSpectators(centerPos, rangex, rangey, multifloor, <optional> onlyPlayers)
@@ -1830,14 +1832,17 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureOutfit(cid)
 	lua_register(m_luaState, "getCreatureOutfit", LuaScriptInterface::luaGetCreatureOutfit);
 
-	//getCreaturePos(cid)
-	lua_register(m_luaState, "getCreaturePos", LuaScriptInterface::luaGetCreaturePosition);
-
 	//getCreaturePosition(cid)
 	lua_register(m_luaState, "getCreaturePosition", LuaScriptInterface::luaGetCreaturePosition);
 
+	//getCreatureLastPosition(cid)
+	lua_register(m_luaState, "getCreatureLastPosition", LuaScriptInterface::luaGetCreatureLastPosition);
+
 	//getCreatureName(cid)
 	lua_register(m_luaState, "getCreatureName", LuaScriptInterface::luaGetCreatureName);
+
+	//getCreatureByName(name)
+	lua_register(m_luaState, "getCreatureByName", LuaScriptInterface::luaGetCreatureByName);
 
 	//getCreatureSpeed(cid)
 	lua_register(m_luaState, "getCreatureSpeed", LuaScriptInterface::luaGetCreatureSpeed);
@@ -2042,14 +2047,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->magLevel;
 				break;
 
-			case PlayerInfoMana:
-				value = player->mana;
-				break;
-
-			case PlayerInfoMaxMana:
-				value = player->getMaxMana();
-				break;
-
 			case PlayerInfoMasterPos:
 			{
 				Position pos;
@@ -2057,10 +2054,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				pushPosition(L, pos, 0);
 				return 1;
 			}
-
-			case PlayerInfoName:
-				lua_pushstring(L, player->name.c_str());
-				return 1;
 
 			case PlayerInfoPosition:
 				pos = player->getPosition();
@@ -2072,10 +2065,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 
 				pushPosition(L, pos, stackpos);
 				return 1;
-
-			case PlayerInfoLookDirection:
-				value = player->direction;
-				break;
 
 			case PlayerInfoTown:
 				value = player->getTown();
@@ -2202,18 +2191,6 @@ int32_t LuaScriptInterface::luaGetPlayerMagLevel(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoMagLevel);
 }
-int32_t LuaScriptInterface::luaGetPlayerMana(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoMana);
-}
-int32_t LuaScriptInterface::luaGetPlayerMaxMana(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoMaxMana);
-}
-int32_t LuaScriptInterface::luaGetPlayerName(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoName);
-}
 int32_t LuaScriptInterface::luaGetPlayerPosition(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoPosition);
@@ -2257,10 +2234,6 @@ int32_t LuaScriptInterface::luaGetPlayerGuildNick(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoSex);
-}
-int32_t LuaScriptInterface::luaGetPlayerLookDir(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoLookDirection);
 }
 int32_t LuaScriptInterface::luaGetPlayerTown(lua_State* L)
 {
@@ -7766,6 +7739,21 @@ int32_t LuaScriptInterface::luaGetCreaturePosition(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetCreatureLastPosition(lua_State* L)
+{
+	//getCreatureLastPosition(cid)
+	ScriptEnvironment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		pushPosition(L, creature->getLastPosition(), 0);
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetCreatureName(lua_State* L)
 {
 	//getCreatureName(cid)
@@ -7781,6 +7769,18 @@ int32_t LuaScriptInterface::luaGetCreatureName(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
+{
+	//getCreatureByName(name)
+	ScriptEnvironment* env = getScriptEnv();
+	if(Creature* creature = g_game.getCreatureByName(popString(L)))
+		lua_pushnumber(L, env->addThing(creature));
+	else
+		lua_pushnil(L);
+
 	return 1;
 }
 
@@ -8096,6 +8096,22 @@ int32_t LuaScriptInterface::luaGetCreatureHealth(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetCreatureLookDirection(lua_State* L)
+{
+	//getCreatureLookDirection(cid)
+	ScriptEnvironment* env = getScriptEnv();
+
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, creature->getDirection());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 {
 	uint32_t cid = popNumber(L);
@@ -8114,6 +8130,81 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureMana(lua_State* L)
+{
+	//getCreatureMana(cid)
+	uint32_t cid = popNumber(L);
+	ScriptEnvironment* env = getScriptEnv();
+	Creature* creature = env->getCreatureByUID(cid);
+	if(creature)
+		lua_pushnumber(L, creature->getMana());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureMaxMana(lua_State* L)
+{
+	//getCreatureMaxMana(cid[, ignoreModifiers = false])
+	bool ignoreModifiers = false;
+	if(lua_gettop(L) > 1)
+		ignoreModifiers = popBoolean(L);
+
+	uint32_t cid = popNumber(L);
+	ScriptEnvironment* env = getScriptEnv();
+	Creature* creature = env->getCreatureByUID(cid);
+	if(creature)
+		lua_pushnumber(L, creature->getPlayer() && ignoreModifiers ? creature->manaMax : creature->getMaxMana());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureHideHealth(lua_State* L)
+{
+	//getCreatureHideHealth(cid)
+	ScriptEnvironment* env = getScriptEnv();
+
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, creature->isHealthHidden());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetHideHealth(lua_State* L)
+{
+	//doCreatureSetHideHealth(cid, hide)
+	bool hide = popBoolean(L);
+
+	ScriptEnvironment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setHiddenHealth(hide);
+		g_game.addCreatureHealth(creature);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
 	return 1;
 }
 

@@ -208,9 +208,6 @@ enum PlayerInfo_t
 	PlayerInfoAccess,
 	PlayerInfoLevel,
 	PlayerInfoMagLevel,
-	PlayerInfoMana,
-	PlayerInfoMaxMana,
-	PlayerInfoName,
 	PlayerInfoPosition,
 	PlayerInfoVocation,
 	PlayerInfoMasterPos,
@@ -223,7 +220,6 @@ enum PlayerInfo_t
 	PlayerInfoGuildRank,
 	PlayerInfoGuildNick,
 	PlayerInfoSex,
-	PlayerInfoLookDirection,
 	PlayerInfoGroupId,
 	PlayerInfoGUID,
 	PlayerInfoPremiumDays,
@@ -458,10 +454,12 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);
 		static int32_t luaGetPlayerMagLevel(lua_State* L);
-		static int32_t luaGetPlayerMana(lua_State* L);
-		static int32_t luaGetPlayerMaxMana(lua_State* L);
+		static int32_t luaGetCreatureMana(lua_State* L);
+		static int32_t luaGetCreatureMaxMana(lua_State* L);
 		static int32_t luaGetCreatureHealth(lua_State* L);
 		static int32_t luaGetCreatureMaxHealth(lua_State* L);
+		static int32_t luaGetCreatureHideHealth(lua_State* L);
+		static int32_t luaDoCreatureSetHideHealth(lua_State* L);
 		static int32_t luaGetCreatureMaster(lua_State* L);
 		static int32_t luaGetCreatureSummons(lua_State* L);
 		static int32_t luaGetSpectators(lua_State* L);
@@ -494,7 +492,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerGuildRank(lua_State* L);
 		static int32_t luaGetPlayerGuildNick(lua_State* L);
 		static int32_t luaGetPlayerSex(lua_State* L);
-		static int32_t luaGetPlayerLookDir(lua_State* L);
+		static int32_t luaGetCreatureLookDirection(lua_State* L);
 		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetPlayerBlessing(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
@@ -604,7 +602,9 @@ class LuaScriptInterface
 		static int32_t luaSetMonsterOutfit(lua_State* L);
 		static int32_t luaSetItemOutfit(lua_State* L);
 		static int32_t luaGetCreaturePosition(lua_State* L);
+		static int32_t luaGetCreatureLastPosition(lua_State* L);
 		static int32_t luaGetCreatureName(lua_State* L);
+		static int32_t luaGetCreatureByName(lua_State* L);
 
 		static int32_t luaIsItemStackable(lua_State* L);
 		static int32_t luaIsItemRune(lua_State* L);
