@@ -583,21 +583,29 @@ void mainLoader(ServiceManager* services)
 			}
 		}
 	}
-	std::string ip;
-	ip = g_config.getString(ConfigManager::IP);
+	
+	StringVec ips = explodeString(g_config.getString(ConfigManager::IP), ";");
+	uint32_t resolvedIp;
 
-	uint32_t resolvedIp = inet_addr(ip.c_str());
-	if(resolvedIp == INADDR_NONE)
+	for(size_t i = 0; i < ips.size(); i++)
 	{
-		struct hostent* he = gethostbyname(ip.c_str());
-		if(he != 0)
-			resolvedIp = *(uint32_t*)he->h_addr;
-		else
+		resolvedIp = inet_addr(ips[i].c_str());
+		if(resolvedIp == INADDR_NONE)
 		{
-			std::ostringstream ss;
-			ss << "ERROR: Cannot resolve " << ip << "!" << std::endl;
-			startupErrorMessage(ss.str());
+			struct hostent* he = gethostbyname(ips[i].c_str());
+			if(he != 0)
+				resolvedIp = *(uint32_t*)he->h_addr;
+			else
+			{
+				std::ostringstream ss;
+				ss << "ERROR: Cannot resolve " << ips[i] << "!" << std::endl;
+				startupErrorMessage(ss.str());
+			}
 		}
+
+		IpNetMask.first = resolvedIp;
+		IpNetMask.second = 0;
+		serverIPs.push_back(IpNetMask);
 	}
 
 	IpNetMask.first = resolvedIp;
