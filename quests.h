@@ -40,7 +40,7 @@ class MissionState
 		MissionState(const std::string& _description, int32_t _missionID);
 
 		int32_t getMissionID() const { return missionID; }
-		std::string getMissionDescription() const { return description; }
+		std::string getMissionDescription(Player* player) const;
 
 	private:
 		std::string description;

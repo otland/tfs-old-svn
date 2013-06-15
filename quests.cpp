@@ -31,6 +31,31 @@ MissionState::MissionState(const std::string& _description, int32_t _missionID)
  	missionID = _missionID;
 }
 
+std::string MissionState::getMissionDescription(Player* player) const
+{
+	std::string state = description;
+
+	std::string::size_type start = 0, end = 0, nStart = 0, length = 0;
+    while((start = state.find("|STORAGE:", end)) != std::string::npos)
+    {
+        nStart = start + 9;
+   		if((end = state.find("|", nStart)) == std::string::npos)
+            break;
+
+        length = end - nStart;
+        int32_t value;
+
+        uint32_t storage = atoi(state.substr(nStart, length).c_str());
+        player->getStorageValue(storage, value);
+
+        std::stringstream s;
+        s << value;
+        state.replace(start, (end - start + 1), s.str());
+    }
+
+    return state;
+}
+
 Mission::Mission(const std::string& _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue, bool _ignoreEndValue)
 {
 	missionName = _missionName;
@@ -58,7 +83,7 @@ std::string Mission::getDescription(Player* player)
 		std::ostringstream s;
 		s << value;
 
-		std::string desc = mainState->getMissionDescription();
+		std::string desc = mainState->getMissionDescription(player);
 		replaceString(desc, "|STATE|", s.str());
 		replaceString(desc, "\\n", "\n");
 		return desc;
@@ -75,7 +100,7 @@ std::string Mission::getDescription(Player* player)
 			{
 				StateList::const_iterator sit = state.find(current);
 				if(sit != state.end())
-					return sit->second->getMissionDescription();
+					return sit->second->getMissionDescription(player);
 			}
 			current--;
 		}
@@ -88,7 +113,7 @@ std::string Mission::getDescription(Player* player)
 			{
 				StateList::const_iterator sit = state.find(current);
 				if(sit != state.end())
-					return sit->second->getMissionDescription();
+					return sit->second->getMissionDescription(player);
 			}
 			current--;
 		}
