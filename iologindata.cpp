@@ -342,9 +342,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		return false;
 
 	uint32_t accno = result->getDataInt("account_id");
-	if(accno < 1)
-		return false;
-
 	Account acc = loadAccount(accno);
 
 	player->setGUID(result->getDataInt("id"));
@@ -362,6 +359,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	if(preload)
 	{
 		//only loading basic info
+		db->freeResult(result);
 		return true;
 	}
 
