@@ -1076,6 +1076,12 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	if(!player || player->isRemoved())
 		return false;
 
+	if(player->getNoMove())
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		return false;
+	}
+
 	uint8_t fromIndex = 0;
 	if(fromPos.x == 0xFFFF)
 	{
@@ -2455,10 +2461,16 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 		return false;
 
 	player->resetIdleTime();
-	player->setNextWalkActionTask(NULL);
+	if(player->getNoMove())
+	{
+		player->sendCancelWalk();
+		return false;
+	}
 
 	std::list<Direction> dirs;
 	dirs.push_back(direction);
+
+	player->setNextWalkActionTask(NULL);
 	return player->startAutoWalk(dirs);
 }
 
@@ -3744,7 +3756,16 @@ bool Game::playerFollowCreature(uint32_t playerId, uint32_t creatureId)
 	player->setAttackedCreature(NULL);
 	Creature* followCreature = NULL;
 	if(creatureId != 0)
+	{
+		if(player->getNoMove())
+		{
+			playerCancelAttackAndFollow(playerId);
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			return false;
+		}
+ 			  
 		followCreature = getCreatureByID(creatureId);
+	}
 
 	g_dispatcher.addTask(createTask(boost::bind(&Game::updateCreatureWalk, this, player->getID())));
 	return player->setFollowCreature(followCreature);

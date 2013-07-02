@@ -331,10 +331,14 @@ bool Monster::isOpponent(const Creature* creature)
 
 void Monster::onCreatureLeave(Creature* creature)
 {
-	// std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
-
 	if(getMaster() == creature)
 	{
+		if(g_config.getBoolean(ConfigManager::SUMMONS_FOLLOW))
+		{
+			if(g_game.internalTeleport(this, creature->getPosition()) == RET_NOERROR)
+				g_game.addMagicEffect(creature->getPosition(), NM_ME_ENERGY_AREA);
+		}
+
 		//Turn the monster off until its master comes back
 		isMasterInRange = false;
 		updateIdleStatus();
@@ -1007,7 +1011,7 @@ void Monster::pushCreatures(Tile* tile)
 
 bool Monster::getNextStep(Direction& dir, uint32_t& flags)
 {
-	if(isIdle || getHealth() <= 0)
+	if(isIdle || getHealth() <= 0 || cannotMove)
 	{
 		//we dont have anyone watching might aswell stop walking
 		eventWalk = 0;

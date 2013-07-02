@@ -71,6 +71,7 @@ class ConfigManager
 			STAMINA_SYSTEM,
 			STORE_TRASH,
 			CLEAN_PROTECTED_ZONES,
+			SUMMONS_FOLLOW,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 

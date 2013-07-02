@@ -45,14 +45,14 @@
 			Returns
 				Creatures max health points.
 
-		getPlayerMana(cid)
+		getCreatureMana(cid)
 			Info
 				This function will check for creatures mana points.
 
 			Returns
 				Creatures current mana points.
 
-		getPlayerMaxMana
+		getCreatureMaxMana(cid)
 			Info
 				This function will check for creatures max mana points.
 
@@ -73,12 +73,12 @@
 			Returns
 				Players current magic level.
 
-		getPlayerName(cid)
+		getCreatureName(cid)
 			Info
-				This function will check for players name.
+				This function will check for creature name.
 
 			Returns
-				Players name.
+				Creaures name.
 
 		getPlayerAccess(cid)
 			Info
@@ -298,12 +298,12 @@
 					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'WTF?!')
 				end
 
-		getPlayerLookDir(cid)
+		getCreatureLookDirection(cid)
 			Info
-				This function will check player direction.
+				This function will check creature direction.
 
 			Returns
-				Player direction.
+				Creature direction.
 					For example:
 						0 - player is looking up (north) (/\)
 						1 - player is looking right (east) (>)
@@ -311,7 +311,7 @@
 						3 - player is looking left (west) (<)
 
 			Example
-				local direction = getPlayerLookDir(cid)
+				local direction = getCreatureLookDirection(cid)
 				if direction = 0 then --when north
 					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to north")
 				elseif direction = 1 then --when east
@@ -534,6 +534,12 @@
 		getPlayerGuildLevel(cid)
 		getCreatureSummons(cid) - Returns: returns a table with all the summons of the creature
 		getWaypointPosition(name)
+		getCreatureHideHealth(cid)
+		getCreatureLastPosition(cid)
+		getDataDir()
+		getLogsDir()
+		getItemInfo(itemid)
+		getCreatureNoMove(cid)
 	
 	//*DO
 	
@@ -617,6 +623,8 @@
 		doPlayerChangeName(cid, newName) 
 		doSetCreatureDirection(cid, direction)
 		doWaypointAddTemporial(name, pos)
+		doCreatureSetHideHealth(cid, hide)
+		doCreatureSetNoMove(cid, block)
 	
 	//*SET
 	

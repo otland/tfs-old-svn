@@ -112,6 +112,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[STAMINA_SYSTEM] = booleanString(getGlobalString(L, "staminaSystem", "yes"));
     m_confBoolean[STORE_TRASH] = booleanString(getGlobalString(L, "storeTrash", "yes"));
     m_confBoolean[CLEAN_PROTECTED_ZONES] = booleanString(getGlobalString(L, "cleanProtectedZones", "no"));
+	m_confBoolean[SUMMONS_FOLLOW] = booleanString(getGlobalString(L, "useSummonsFollow", "no"));
 
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confString[MAP_STORAGE_TYPE] = getGlobalString(L, "mapStorageType", "relational");

@@ -975,6 +975,37 @@ void LuaScriptInterface::pushPosition(lua_State* L, const Position& position, ui
 	setField(L, "stackpos", stackpos);
 }
 
+void LuaScriptInterface::pushOutfit(lua_State* L, const Outfit_t& outfit)
+{
+	lua_newtable(L);
+	setField(L, "lookType", outfit.lookType);
+	setField(L, "lookTypeEx", outfit.lookTypeEx);
+	setField(L, "lookHead", outfit.lookHead);
+	setField(L, "lookBody", outfit.lookBody);
+	setField(L, "lookLegs", outfit.lookLegs);
+	setField(L, "lookFeet", outfit.lookFeet);
+	setField(L, "lookAddons", outfit.lookAddons);
+	setField(L, "lookMount", outfit.lookMount);
+}
+
+Outfit_t LuaScriptInterface::popOutfit(lua_State* L)
+{
+	Outfit_t outfit;
+	outfit.lookMount = getField(L, "lookMount");
+	outfit.lookAddons = getField(L, "lookAddons");
+
+	outfit.lookFeet = getField(L, "lookFeet");
+	outfit.lookLegs = getField(L, "lookLegs");
+	outfit.lookBody = getField(L, "lookBody");
+	outfit.lookHead = getField(L, "lookHead");
+
+	outfit.lookTypeEx = getField(L, "lookTypeEx");
+	outfit.lookType = getField(L, "lookType");
+
+	lua_pop(L, 1); //table
+	return outfit;
+}
+
 void LuaScriptInterface::pushCallback(lua_State* L, int32_t callback)
 {
 	lua_rawgeti(L, LUA_REGISTRYINDEX, callback);
@@ -1641,6 +1672,12 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "isMovable", LuaScriptInterface::luaIsMoveable);
 	//isMoveable(uid)
 	lua_register(m_luaState, "isMoveable", LuaScriptInterface::luaIsMoveable);
+
+	//getCreatureNoMove(cid)
+	lua_register(m_luaState, "getCreatureNoMove", LuaScriptInterface::luaGetCreatureNoMove);
+
+	//doCreatureSetNoMove(cid, block)
+	lua_register(m_luaState, "doCreatureSetNoMove", LuaScriptInterface::luaDoCreatureSetNoMove);
 
 	//getPlayerByName(name)
 	lua_register(m_luaState, "getPlayerByName", LuaScriptInterface::luaGetPlayerByName);
@@ -6267,31 +6304,17 @@ int32_t LuaScriptInterface::luaDoChangeSpeed(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetCreatureOutfit(lua_State* L)
 {
-	//doSetCreatureOutfit(cid, outfit, time)
-	int32_t time = (int32_t)popNumber(L);
-	Outfit_t outfit;
-	outfit.lookType = getField(L, "lookType");
-	outfit.lookHead = getField(L, "lookHead");
-	outfit.lookBody = getField(L, "lookBody");
-	outfit.lookLegs = getField(L, "lookLegs");
-	outfit.lookFeet = getField(L, "lookFeet");
-	outfit.lookAddons = getField(L, "lookAddons");
-	lua_pop(L, 1);
+	//doSetCreatureOutfit(cid, outfit[, time = -1])
+	int32_t time = -1;
+	if(lua_gettop(L) > 2)
+		time = (int32_t)popNumber(L);
 
 	uint32_t cid = popNumber(L);
-
+	Outfit_t outfit = popOutfit(L);
 	ScriptEnvironment* env = getScriptEnv();
-
 	Creature* creature = env->getCreatureByUID(cid);
-
 	if(creature)
-	{
-		ReturnValue ret = Spell::CreateIllusion(creature, outfit, time);
-		if(ret == RET_NOERROR)
-			lua_pushboolean(L, true);
-		else
-			lua_pushboolean(L, false);
-	}
+		lua_pushboolean(L, Spell::CreateIllusion(creature, outfit, time) == RET_NOERROR);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6304,22 +6327,10 @@ int32_t LuaScriptInterface::luaGetCreatureOutfit(lua_State* L)
 {
 	//getCreatureOutfit(cid)
 	uint32_t cid = popNumber(L);
-
 	ScriptEnvironment* env = getScriptEnv();
-
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
-	{
-		const Outfit_t outfit = creature->getCurrentOutfit();
-
-		lua_newtable(L);
-		setField(L, "lookType", outfit.lookType);
-		setField(L, "lookHead", outfit.lookHead);
-		setField(L, "lookBody", outfit.lookBody);
-		setField(L, "lookLegs", outfit.lookLegs);
-		setField(L, "lookFeet", outfit.lookFeet);
-		setField(L, "lookAddons", outfit.lookAddons);
-	}
+		pushOutfit(L, creature->getCurrentOutfit());
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -7780,6 +7791,42 @@ int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 		lua_pushnumber(L, env->addThing(creature));
 	else
 		lua_pushnil(L);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureNoMove(lua_State* L)
+{
+	//getCreatureNoMove(cid)
+	ScriptEnvironment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, creature->getNoMove());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetNoMove(lua_State* L)
+{
+	//doCreatureSetNoMove(cid, block)
+	bool block = popBoolean(L);
+
+	ScriptEnvironment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setNoMove(block);
+		creature->onWalkAborted();
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
 
 	return 1;
 }

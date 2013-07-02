@@ -326,6 +326,8 @@ class LuaScriptInterface
 		static void createTable(lua_State* L, int32_t index);
 		static void createTable(lua_State* L, int32_t index, int32_t narr, int32_t nrec);
 		static void pushTable(lua_State* L);
+		static void pushOutfit(lua_State* L, const Outfit_t& outfit);
+		static Outfit_t popOutfit(lua_State* L);
 
 		template<class T>
 		static T popNumber(lua_State* L);
@@ -405,6 +407,8 @@ class LuaScriptInterface
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaDoSetCreatureDropLoot(lua_State* L);
 		static int32_t luaDoPlayerSetBankBalance(lua_State* L);
+		static int32_t luaGetCreatureNoMove(lua_State* L);
+		static int32_t luaDoCreatureSetNoMove(lua_State* L);
 
 		//queries
 		static int32_t luaGetPlayerByName(lua_State* L);

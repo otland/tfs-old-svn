@@ -2077,6 +2077,9 @@ bool Npc::getNextStep(Direction& dir, uint32_t& flags)
 
 bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 {
+	if(cannotMove)
+		return false;
+
 	if(masterRadius == 0)
 		return false;
 

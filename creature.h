@@ -195,6 +195,13 @@ class Creature : public AutoID, virtual public Thing
 		void setBaseSpeed(uint32_t newBaseSpeed) {baseSpeed = newBaseSpeed;}
 		int32_t getBaseSpeed() const {return baseSpeed;}
 
+		void setNoMove(bool _cannotMove)
+		{
+			cannotMove = _cannotMove;
+			cancelNextWalk = true;
+		}
+		bool getNoMove() const {return cannotMove;}
+
 		virtual int32_t getHealth() const {return health;}
 		virtual int32_t getMaxHealth() const {return healthMax;}
 		virtual int32_t getMana() const {return mana;}
@@ -371,6 +378,7 @@ class Creature : public AutoID, virtual public Thing
 		bool isInternalRemoved;
 		bool isMapLoaded;
 		bool isUpdatingPath;
+		bool cannotMove;
 
 		// The creature onThink event vector this creature belongs to
 		// -1 represents that the creature isn't in any vector

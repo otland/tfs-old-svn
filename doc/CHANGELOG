@@ -52,7 +52,7 @@
 
 [ Custom Charges
 	Added compat and functions lua file.
-	Now getCreatureMana(cid) and cid[, ignoreModifiers = false]) can be used instead of getPlayerMana(cid) and getPlayerMaxMana(cid).
+	Now getCreatureMana(cid) and getCreatureMaxMana(cid[, ignoreModifiers = false]) can be used instead of getPlayerMana(cid) and getPlayerMaxMana(cid).
 	Now getCreatureLookDirection(cid) can be used instead of getPlayerLookDir(cid).
 	Removed getPlayerName(cid), you can use getCreatureName(cid).
 	Now you can use float values for experience, skill, magic rates and experience stages.
@@ -62,9 +62,10 @@
 	Now logs have separated folders to talkactions and commands.
 	New cleaning system a lot of faster and configurable at config.lua.
 	New lua function getCreatureHideHealth(cid), doCreatureSetHideHealth(cid, hide), getCreatureLastPosition(cid), cleanTile(pos[, forceMapLoaded = false]), 
-		getDataDir(), getLogsDir() and getItemInfo(itemid).
+		getDataDir(), getLogsDir(), getItemInfo(itemid), getCreatureNoMove(cid) and doCreatureSetNoMove(cid, block).
 	New creature event onLook(cid, thing, position, lookDistance).
 	Corrected mount names.
+	New feature configurable useSummonsFollow.
 ]
 
 [ The Forgotten Server Charges
