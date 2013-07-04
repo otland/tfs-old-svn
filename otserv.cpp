@@ -608,10 +608,6 @@ void mainLoader(ServiceManager* services)
 		serverIPs.push_back(IpNetMask);
 	}
 
-	IpNetMask.first = resolvedIp;
-	IpNetMask.second = 0;
-	serverIPs.push_back(IpNetMask);
-
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user, it is recommended to execute is as a normal user." << std::endl;
