@@ -63,6 +63,7 @@
 	whiteSkullTime = 15 * 60 * 1000
 	oldConditionAccuracy = "no"
 	stairJumpExhaustion = 2000
+	useSummonsFollow = "no"
 
 	-- Commands
 	displayGamemastersWithOnlineCommand = "no"
