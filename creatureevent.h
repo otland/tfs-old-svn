@@ -35,7 +35,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_DEATH,
 	CREATURE_EVENT_KILL,
 	CREATURE_EVENT_ADVANCE,
-	CREATURE_EVENT_LOOK
+	CREATURE_EVENT_LOOK,
+	CREATURE_EVENT_ATTACK
 };
 
 class CreatureEvent;
@@ -91,6 +92,7 @@ class CreatureEvent : public Event
 		uint32_t executeOnKill(Creature* creature, Creature* target);
 		uint32_t executeAdvance(Creature*, skills_t, uint32_t, uint32_t);
 		uint32_t executeOnLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance);
+		uint32_t executeAttack(Creature* creature, Creature* target);
 		//
 
 	protected:

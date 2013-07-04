@@ -127,8 +127,6 @@ Creature()
 
 	blessings = 0;
 
-	mayNotMove = false;
-
 	marketDepotId = -1;
 	lastDepotId = -1;
 
@@ -1908,7 +1906,7 @@ void Player::onThink(uint32_t interval)
 		else if(client && idleTime == 120000)
 			client->sendTextMessage(MSG_STATUS_WARNING, "You have been idle for two minutes, you will be disconnected in 30 seconds if you are still idle then.");
 	}
-	else if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !mayNotMove && !isAccessPlayer())
+	else if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !getNoMove() && !isAccessPlayer())
 	{
 		idleTime += interval;
 		if(idleTime > (g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000) + 60000)
@@ -3626,7 +3624,7 @@ bool Player::setAttackedCreature(Creature* creature)
 		return false;
 	}
 
-	if(chaseMode == CHASEMODE_FOLLOW && creature)
+	if(chaseMode == CHASEMODE_FOLLOW && creature && !getNoMove())
 	{
 		if(followCreature != creature)
 		{
@@ -3733,24 +3731,19 @@ void Player::onFollowCreature(const Creature* creature)
 
 void Player::setChaseMode(chaseMode_t mode)
 {
-	chaseMode_t prevChaseMode = chaseMode;
-	chaseMode = mode;
+	if(chaseMode == mode)
+		return;
 
-	if(prevChaseMode != chaseMode)
+	chaseMode = mode;
+	if(chaseMode == CHASEMODE_FOLLOW)
 	{
-		if(chaseMode == CHASEMODE_FOLLOW)
-		{
-			if(!followCreature && attackedCreature)
-			{
-				//chase opponent
-				setFollowCreature(attackedCreature);
-			}
-		}
-		else if(attackedCreature)
-		{
-			setFollowCreature(NULL);
-			cancelNextWalk = true;
-		}
+		if(!followCreature && attackedCreature && !getNoMove()) //chase opponent
+			setFollowCreature(attackedCreature);
+	}
+	else if(attackedCreature)
+	{
+		setFollowCreature(NULL);
+		cancelNextWalk = true;
 	}
 }
 

@@ -193,6 +193,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 			m_type = CREATURE_EVENT_ADVANCE;
 		else if(tmpStr == "look")
 			m_type = CREATURE_EVENT_LOOK;
+		else if(tmpStr == "attack")
+			m_type = CREATURE_EVENT_ATTACK;
 		else
 		{
 			std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
@@ -236,6 +238,9 @@ std::string CreatureEvent::getScriptEventName()
 
 		case CREATURE_EVENT_LOOK:
 			return "onLook";
+
+		case CREATURE_EVENT_ATTACK:
+			return "onAttack";
 
 		case CREATURE_EVENT_NONE:
 		default:
@@ -433,6 +438,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 uint32_t CreatureEvent::executeAdvance(Creature* creature, skills_t skill, uint32_t oldLevel,
 	uint32_t newLevel)
 {
+	//onAdvance(cid, skill, oldLevel, newLevel)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
@@ -529,6 +535,37 @@ uint32_t CreatureEvent::executeOnLook(Player* player, Thing* thing, const Positi
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeOnLook] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
+{
+	//onAttack(cid, target)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnvironment* env = m_scriptInterface->getScriptEnv();
+
+		#ifdef __DEBUG_LUASCRIPTS__
+		env->setEventDesc(creature->getName());
+		#endif
+
+		env->setScriptId(m_scriptId, m_scriptInterface);
+		env->setRealPos(creature->getPosition());
+
+		lua_State* L = m_scriptInterface->getLuaState();
+		m_scriptInterface->pushFunction(m_scriptId);
+
+		lua_pushnumber(L, env->addThing(creature));
+		lua_pushnumber(L, env->addThing(target));
+
+		bool result = m_scriptInterface->callFunction(2);
+		m_scriptInterface->releaseScriptEnv();
+		return result;
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeAttack] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

@@ -51,21 +51,22 @@
 ]
 
 [ Custom Charges
+	Corrected mount names.
 	Added compat and functions lua file.
 	Now getCreatureMana(cid) and getCreatureMaxMana(cid[, ignoreModifiers = false]) can be used instead of getPlayerMana(cid) and getPlayerMaxMana(cid).
 	Now getCreatureLookDirection(cid) can be used instead of getPlayerLookDir(cid).
-	Removed getPlayerName(cid), you can use getCreatureName(cid).
 	Now you can use float values for experience, skill, magic rates and experience stages.
 	Now onSay for talkactions can be used onSay(cid, words, param, channel).
 	Now you can use new tags for talkactions "log", "acctype" "senssitive" and "group".
-	Updated global.lua with CONST_ME_LAST = CONST_ME_CONFETTI_VERTICAL for new working talkactions.
 	Now logs have separated folders to talkactions and commands.
+	Updated global.lua with CONST_ME_LAST = CONST_ME_CONFETTI_VERTICAL for new working talkactions.
 	New cleaning system a lot of faster and configurable at config.lua.
 	New lua function getCreatureHideHealth(cid), doCreatureSetHideHealth(cid, hide), getCreatureLastPosition(cid), cleanTile(pos[, forceMapLoaded = false]), 
-		getDataDir(), getLogsDir(), getItemInfo(itemid), getCreatureNoMove(cid) and doCreatureSetNoMove(cid, block).
-	New creature event onLook(cid, thing, position, lookDistance).
-	Corrected mount names.
+		getDataDir(), getLogsDir(), getItemInfo(itemid), getCreatureNoMove(cid), doCreatureSetNoMove(cid, block), getPlayerSpentMana(cid).
+	New creature events onLook(cid, thing, position, lookDistance), onAttack(cid, target).
 	New feature configurable useSummonsFollow.
+	Removed getPlayerName(cid), you can use getCreatureName(cid).
+	Removed mayNotMove, you can use getCreatureNoMove(cid) and doCreatureSetNoMove(cid, block)
 ]
 
 [ The Forgotten Server Charges

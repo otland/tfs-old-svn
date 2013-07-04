@@ -244,9 +244,19 @@ void Creature::onAttacking(uint32_t interval)
 	if(!attackedCreature)
 		return;
 
+	bool deny = false;
+	CreatureEventList attackEvents = getCreatureEvents(CREATURE_EVENT_ATTACK);
+	for(CreatureEventList::iterator it = attackEvents.begin(); it != attackEvents.end(); ++it)
+	{
+		if(!(*it)->executeAttack(this, attackedCreature) && !deny)
+			deny = true;
+	}
+
+	if(deny)
+		setAttackedCreature(NULL);
+
 	onAttacked();
 	attackedCreature->onAttacked();
-
 	if(g_game.isSightClear(getPosition(), attackedCreature->getPosition(), true))
 		doAttacking(interval);
 }
@@ -312,10 +322,18 @@ void Creature::onWalk(Direction& dir)
 		{
 			switch(r)
 			{
-				case 0: dir = NORTH; break;
-				case 1: dir = WEST; break;
-				case 3: dir = SOUTH; break;
-				case 4: dir = EAST; break;
+				case 0:
+					dir = NORTH;
+					break;
+				case 1:
+					dir = WEST;
+					break;
+				case 3:
+					dir = SOUTH;
+					break;
+				case 4:
+					dir = EAST;
+					break;
 
 				default:
 					break;

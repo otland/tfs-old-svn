@@ -208,6 +208,7 @@ enum PlayerInfo_t
 	PlayerInfoAccess,
 	PlayerInfoLevel,
 	PlayerInfoMagLevel,
+	PlayerInfoManaSpent,
 	PlayerInfoPosition,
 	PlayerInfoVocation,
 	PlayerInfoMasterPos,
@@ -458,6 +459,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);
 		static int32_t luaGetPlayerMagLevel(lua_State* L);
+		static int32_t luaGetPlayerSpentMana(lua_State* L);
 		static int32_t luaGetCreatureMana(lua_State* L);
 		static int32_t luaGetCreatureMaxMana(lua_State* L);
 		static int32_t luaGetCreatureHealth(lua_State* L);
@@ -635,7 +637,6 @@ class LuaScriptInterface
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
-		static int32_t luaMayNotMove(lua_State* L);
 
 		static int32_t luaDoPlayerAddPremiumDays(lua_State* L);
 		static int32_t luaDoPlayerRemovePremiumDays(lua_State* L);

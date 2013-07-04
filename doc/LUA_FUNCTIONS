@@ -540,6 +540,7 @@
 		getLogsDir()
 		getItemInfo(itemid)
 		getCreatureNoMove(cid)
+		getPlayerSpentMana(cid)
 	
 	//*DO
 	

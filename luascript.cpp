@@ -1263,6 +1263,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerMagLevel(cid)
 	lua_register(m_luaState, "getPlayerMagLevel", LuaScriptInterface::luaGetPlayerMagLevel);
 
+	//getPlayerSpentMana(cid)
+	lua_register(m_luaState, "getPlayerSpentMana", LuaScriptInterface::luaGetPlayerSpentMana);
+
 	//getPlayerAccess(cid)
 	lua_register(m_luaState, "getPlayerAccess", LuaScriptInterface::luaGetPlayerAccess);
 
@@ -1668,8 +1671,6 @@ void LuaScriptInterface::registerFunctions()
 	//isCorpse(uid)
 	lua_register(m_luaState, "isCorpse", LuaScriptInterface::luaIsCorpse);
 
-	//isMovable(uid)
-	lua_register(m_luaState, "isMovable", LuaScriptInterface::luaIsMoveable);
 	//isMoveable(uid)
 	lua_register(m_luaState, "isMoveable", LuaScriptInterface::luaIsMoveable);
 
@@ -1905,8 +1906,6 @@ void LuaScriptInterface::registerFunctions()
 	//isItemFluidContainer(itemid)
 	lua_register(m_luaState, "isItemFluidContainer", LuaScriptInterface::luaIsItemFluidContainer);
 
-	//isItemMovable(itemid)
-	lua_register(m_luaState, "isItemMovable", LuaScriptInterface::luaIsItemMoveable);
 	//isItemMoveable(itemid)
 	lua_register(m_luaState, "isItemMoveable", LuaScriptInterface::luaIsItemMoveable);
 
@@ -1958,9 +1957,6 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerPopupFYI(cid, message)
 	lua_register(m_luaState, "doPlayerPopupFYI", LuaScriptInterface::luaDoPlayerPopupFYI);
 
-	//mayNotMove(cid, value)
-	lua_register(m_luaState, "mayNotMove", LuaScriptInterface::luaMayNotMove);
-
 	//doPlayerAddPremiumDays(cid, days)
 	lua_register(m_luaState, "doPlayerAddPremiumDays", LuaScriptInterface::luaDoPlayerAddPremiumDays);
 
@@ -1979,8 +1975,6 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddBlessing(cid, blessing)
 	lua_register(m_luaState, "doPlayerAddBlessing", LuaScriptInterface::luaDoPlayerAddBlessing);
 
-	//getPlayerAccountBalance(cid), added for compatibility with otserv
-	lua_register(m_luaState, "getPlayerAccountBalance", LuaScriptInterface::luaGetPlayerBankBalance);
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBankBalance);
 
@@ -1993,18 +1987,16 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerLastLoginSaved(cid)
 	lua_register(m_luaState, "getPlayerLastLoginSaved", LuaScriptInterface::luaGetPlayerLastLoginSaved);
 
-	//saveServer()
-	//saveData()
-	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
-	lua_register(m_luaState, "saveData", LuaScriptInterface::luaSaveServer);
+	//doSaveServer()
+	lua_register(m_luaState, "doSaveServer", LuaScriptInterface::luaSaveServer);
 
-	//refreshMap()
-	lua_register(m_luaState, "refreshMap", LuaScriptInterface::luaRefreshMap);
+	//doRefreshMap()
+	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaRefreshMap);
 
-	//cleanMap()
-	lua_register(m_luaState, "cleanMap", LuaScriptInterface::luaCleanMap);
+	//doCleanMap()
+	lua_register(m_luaState, "doCleanMap", LuaScriptInterface::luaCleanMap);
 
-	//cleanTile(pos[, forceMapLoaded = false])
+	//doCleanTile(pos[, forceMapLoaded = false])
 	lua_register(m_luaState, "cleanTile", LuaScriptInterface::luaCleanTile);
 
 	//getPlayersByAccountNumber(accountNumber)
@@ -2014,9 +2006,7 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "getAccountNumberByPlayerName", LuaScriptInterface::luaGetAccountNumberByPlayerName);
 
 	//getIPByPlayerName(name)
-	//getIpByName(name)
 	lua_register(m_luaState, "getIPByPlayerName", LuaScriptInterface::luaGetIPByPlayerName);
-	lua_register(m_luaState, "getIpByName", LuaScriptInterface::luaGetIPByPlayerName);
 
 	//getPlayersByIPAddress(ip[, mask = 0xFFFFFFFF])
 	lua_register(m_luaState, "getPlayersByIPAddress", LuaScriptInterface::luaGetPlayersByIPAddress);
@@ -2078,6 +2068,10 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 
 			case PlayerInfoLevel:
 				value = player->level;
+				break;
+
+			case PlayerInfoManaSpent:
+				value = player->getSpentMana();
 				break;
 
 			case PlayerInfoMagLevel:
@@ -2227,6 +2221,10 @@ int32_t LuaScriptInterface::luaGetPlayerLevel(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerMagLevel(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoMagLevel);
+}
+int32_t LuaScriptInterface::luaGetPlayerSpentMana(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoManaSpent);
 }
 int32_t LuaScriptInterface::luaGetPlayerPosition(lua_State* L)
 {
@@ -6682,7 +6680,6 @@ int32_t LuaScriptInterface::luaIsCorpse(lua_State* L)
 int32_t LuaScriptInterface::luaIsMoveable(lua_State* L)
 {
 	//isMoveable(uid)
-	//isMovable(uid)
 	uint32_t uid = popNumber(L);
 
 	ScriptEnvironment* env = getScriptEnv();
@@ -7284,29 +7281,6 @@ int32_t LuaScriptInterface::luaDoPlayerPopupFYI(lua_State* L)
 	if(player)
 	{
 		player->sendFYIBox(message);
-		lua_pushboolean(L, true);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaMayNotMove(lua_State* L)
-{
-	//mayNotMove(cid, value)
-	bool boolValue = popBoolean(L);
-	uint32_t cid = (uint32_t)popNumber(L);
-	ScriptEnvironment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
-	{
-		player->mayNotMove = boolValue;
-		if(player->mayNotMove)
-			player->onWalkAborted();
-
 		lua_pushboolean(L, true);
 	}
 	else

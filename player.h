@@ -309,7 +309,6 @@ class Player : public Creature, public Cylinder
 		int16_t getLastDepotId() const { return lastDepotId; }
 
 		void resetIdleTime() {idleTime = 0;}
-		bool getNoMove() const {return mayNotMove;}
 
 		bool isAccountManager() const {return accountManager != NULL;}
 		void setAccountManager() { if(accountManager == NULL) accountManager = new AccountManager();}
@@ -869,7 +868,6 @@ class Player : public Creature, public Cylinder
 		int16_t marketDepotId;
 		int16_t lastDepotId;
 
-		bool mayNotMove;
 		bool requestedOutfit;
 
 		double inventoryWeight;
