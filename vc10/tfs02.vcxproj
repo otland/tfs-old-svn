@@ -1,28 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug GUI|Win32">
-      <Configuration>Debug GUI</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug GUI|x64">
-      <Configuration>Debug GUI</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release GUI|Win32">
-      <Configuration>Release GUI</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release GUI|x64">
-      <Configuration>Release GUI</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -42,25 +26,9 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -79,39 +47,11 @@
     <Import Project="arch32.props" />
     <Import Project="debug.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="settings.props" />
-    <Import Project="arch32.props" />
-    <Import Project="debug.props" />
-    <Import Project="gui.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="settings.props" />
-    <Import Project="arch32.props" />
-    <Import Project="release.props" />
-    <Import Project="gui.props" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="settings.props" />
     <Import Project="arch64.props" />
     <Import Project="debug.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="settings.props" />
-    <Import Project="arch64.props" />
-    <Import Project="debug.props" />
-    <Import Project="gui.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="settings.props" />
-    <Import Project="arch64.props" />
-    <Import Project="release.props" />
-    <Import Project="gui.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -127,11 +67,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|Win32'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|x64'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -146,28 +82,6 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|Win32'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN32;_DEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <TargetMachine>MachineX86</TargetMachine>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|Win32'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <TargetMachine>MachineX86</TargetMachine>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>WIN64;_DEBUG;_CONSOLE;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -176,24 +90,6 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug GUI|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN64;_DEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release GUI|x64'">
-    <ClCompile>
-      <PreprocessorDefinitions>WIN64;NDEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -250,11 +146,9 @@
     <ClCompile Include="..\fileloader.cpp" />
     <ClCompile Include="..\game.cpp" />
     <ClCompile Include="..\globalevent.cpp" />
-    <ClCompile Include="..\gui.cpp" />
     <ClCompile Include="..\house.cpp" />
     <ClCompile Include="..\housetile.cpp" />
     <ClCompile Include="..\inbox.cpp" />
-    <ClCompile Include="..\inputbox.cpp" />
     <ClCompile Include="..\ioguild.cpp" />
     <ClCompile Include="..\iologindata.cpp" />
     <ClCompile Include="..\iomap.cpp" />
@@ -277,12 +171,8 @@
     <ClCompile Include="..\otpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GUI|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GUI|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GUI|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GUI|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile>otpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\otserv.cpp" />
@@ -290,7 +180,6 @@
     <ClCompile Include="..\outputmessage.cpp" />
     <ClCompile Include="..\party.cpp" />
     <ClCompile Include="..\player.cpp" />
-    <ClCompile Include="..\playerbox.cpp" />
     <ClCompile Include="..\position.cpp" />
     <ClCompile Include="..\protocol.cpp" />
     <ClCompile Include="..\protocolgame.cpp" />
@@ -309,7 +198,6 @@
     <ClCompile Include="..\talkaction.cpp" />
     <ClCompile Include="..\tasks.cpp" />
     <ClCompile Include="..\teleport.cpp" />
-    <ClCompile Include="..\textlogger.cpp" />
     <ClCompile Include="..\thing.cpp" />
     <ClCompile Include="..\tile.cpp" />
     <ClCompile Include="..\tools.cpp" />
@@ -349,11 +237,9 @@
     <ClInclude Include="..\fileloader.h" />
     <ClInclude Include="..\game.h" />
     <ClInclude Include="..\globalevent.h" />
-    <ClInclude Include="..\gui.h" />
     <ClInclude Include="..\house.h" />
     <ClInclude Include="..\housetile.h" />
     <ClInclude Include="..\inbox.h" />
-    <ClInclude Include="..\inputbox.h" />
     <ClInclude Include="..\ioguild.h" />
     <ClInclude Include="..\iologindata.h" />
     <ClInclude Include="..\iomap.h" />
@@ -380,7 +266,6 @@
     <ClInclude Include="..\outputmessage.h" />
     <ClInclude Include="..\party.h" />
     <ClInclude Include="..\player.h" />
-    <ClInclude Include="..\playerbox.h" />
     <ClInclude Include="..\position.h" />
     <ClInclude Include="..\protocol.h" />
     <ClInclude Include="..\protocolgame.h" />
@@ -388,7 +273,6 @@
     <ClInclude Include="..\protocolold.h" />
     <ClInclude Include="..\quests.h" />
     <ClInclude Include="..\raids.h" />
-    <ClInclude Include="..\resources.h" />
     <ClInclude Include="..\rsa.h" />
     <ClInclude Include="..\scheduler.h" />
     <ClInclude Include="..\scriptmanager.h" />
@@ -401,7 +285,6 @@
     <ClInclude Include="..\tasks.h" />
     <ClInclude Include="..\teleport.h" />
     <ClInclude Include="..\templates.h" />
-    <ClInclude Include="..\textlogger.h" />
     <ClInclude Include="..\thing.h" />
     <ClInclude Include="..\tile.h" />
     <ClInclude Include="..\tools.h" />

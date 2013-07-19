@@ -114,9 +114,6 @@ Game::Game()
 
 Game::~Game()
 {
-	blacklist.clear();
-	whitelist.clear();
-
 	delete map;
 	delete offlineTrainingWindow;
 
@@ -172,7 +169,6 @@ void Game::setGameState(GameState_t newState)
 
 				Mounts::getInstance()->loadFromXml();
 
-				loadStatuslist();
 				loadMotd();
 				loadPlayersRecord();
 
@@ -6554,39 +6550,6 @@ bool Game::playerAnswerModalWindow(uint32_t playerId, uint32_t modalWindowId, ui
 
 		player->setBedItem(NULL);
 	}
-	return true;
-}
-
-bool Game::loadStatuslist()
-{
-	xmlDocPtr doc = xmlParseFile("http://forgottenserver.otland.net/statuslist.xml");
-	if(!doc)
-		return false;
-
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
-	if(!xmlStrcmp(root->name, (const xmlChar*)"statuslist"))
-	{
-		p = root->children;
-		while(p)
-		{
-			if(!xmlStrcmp(p->name, (const xmlChar*)"blacklist"))
-			{
-				std::string ip;
-				if(readXMLString(p, "ip", ip))
-					blacklist.push_back(ip);
-			}
-			else if(!xmlStrcmp(p->name, (const xmlChar*)"whitelist"))
-			{
-				std::string ip;
-				if(readXMLString(p, "ip", ip))
-					whitelist.push_back(ip);
-			}
-
-			p = p->next;
-		}
-	}
-
-	xmlFreeDoc(doc);
 	return true;
 }
 

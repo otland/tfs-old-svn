@@ -43,9 +43,6 @@
 #include "mounts.h"
 #include "quests.h"
 #include "outputmessage.h"
-#ifndef _CONSOLE
-#include "gui.h"
-#endif
 
 extern ConfigManager g_config;
 extern Game g_game;
@@ -1507,9 +1504,6 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			#endif
 		}
 
-		#ifndef _CONSOLE
-		GUI::getInstance()->m_pBox.addPlayer(this);
-		#endif
 		std::cout << name << " has logged in." << std::endl;
 		g_game.checkPlayersRecord();
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
@@ -1611,9 +1605,6 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 
 		g_chat.removeUserFromAllChannels(this);
 
-		#ifndef _CONSOLE
-		GUI::getInstance()->m_pBox.removePlayer(this);
-		#endif
 		std::cout << getName() << " has logged out." << std::endl;
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 

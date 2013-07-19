@@ -29,7 +29,7 @@
 #include "networkmessage.h"
 #include "outputmessage.h"
 #include "tools.h"
-#include "resources.h"
+#include "definitions.h"
 
 #ifndef WIN32
 	#define SOCKET_ERROR -1
@@ -63,14 +63,8 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	if(ip != 0x0100007F)
 	{
 		std::string ipStr = convertIPToString(ip);
-		if(ipStr != g_config.getString(ConfigManager::IP) && !g_game.isInWhitelist(ipStr))
+		if(ipStr != g_config.getString(ConfigManager::IP))
 		{
-			if(g_game.isInBlacklist(ipStr))
-			{
-				getConnection()->closeConnection();
-				return;
-			}
-
 			std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(ip);
 			if(it != ipConnectMap.end())
 			{

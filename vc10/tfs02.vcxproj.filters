@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -87,16 +87,10 @@
     <ClCompile Include="..\globalevent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\gui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\house.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\housetile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\inputbox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ioguild.cpp">
@@ -168,9 +162,6 @@
     <ClCompile Include="..\player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\playerbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\position.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -223,9 +214,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\teleport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\textlogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\thing.cpp">
@@ -350,16 +338,10 @@
     <ClInclude Include="..\globalevent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\gui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\house.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\housetile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inputbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\ioguild.h">
@@ -437,9 +419,6 @@
     <ClInclude Include="..\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\playerbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\position.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -498,9 +477,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\templates.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\textlogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\thing.h">

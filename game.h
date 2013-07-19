@@ -85,7 +85,6 @@ enum LightState_t
 #define STATE_TIME 1000
 
 typedef std::map<int32_t, int32_t> StageList;
-typedef std::vector<std::string> StatusList;
 typedef std::list<Position> Trash;
 
 /**
@@ -549,11 +548,6 @@ class Game
 
 		void sendOfflineTrainingDialog(Player* player);
 
-		bool loadStatuslist();
-
-		bool isInBlacklist(const std::string& ip) const { for (StatusList::const_iterator it = blacklist.begin(), end = blacklist.end(); it != end; ++it) { if (*it == ip) return true; } return false; }
-		bool isInWhitelist(const std::string& ip) const { for (StatusList::const_iterator it = whitelist.begin(), end = whitelist.end(); it != end; ++it) { if (*it == ip) return true; } return false; }
-
 	protected:
 		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);
 		bool playerWhisper(Player* player, const std::string& text);
@@ -626,8 +620,5 @@ class Game
 		ModalWindow* offlineTrainingWindow;
 
 		std::vector<std::string> commandTags;
-
-		StatusList blacklist;
-		StatusList whitelist;
 };
 #endif

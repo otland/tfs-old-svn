@@ -2,9 +2,9 @@
 <talkactions>
 	<!-- README:
 		The list of Account Types:
-		Aacocunt type Normal = 1
+		Account type Normal = 1
 		Account type Tutor = 2
-		Accout type Senior Tutor = 3
+		Account type Senior Tutor = 3
 		Account type Gamemaster = 4
 		Account type GOD = 5
 	

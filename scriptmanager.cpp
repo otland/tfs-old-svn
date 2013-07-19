@@ -33,10 +33,6 @@
 #include "creatureevent.h"
 #include "globalevent.h"
 
-#ifndef _CONSOLE
-#include "gui.h"
-#endif
-
 Actions* g_actions = NULL;
 CreatureEvents* g_creatureEvents = NULL;
 GlobalEvents* g_globalEvents = NULL;

@@ -26,7 +26,7 @@
 #include <cerrno>
 
 #include "creature.h"
-#include "resources.h"
+#include "definitions.h"
 #include "player.h"
 #include "npc.h"
 #include "monsters.h"

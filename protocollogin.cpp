@@ -31,7 +31,6 @@
 #include "ban.h"
 #include <iomanip>
 #include "game.h"
-#include "gui.h"
 
 extern ConfigManager g_config;
 extern IPList serverIPs;
@@ -65,11 +64,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
-	if(
-#ifndef _CONSOLE
-		!GUI::getInstance()->m_connections ||
-#endif
-		g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
 		getConnection()->closeConnection();
 		return false;
