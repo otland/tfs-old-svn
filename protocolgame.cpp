@@ -1756,6 +1756,15 @@ void ProtocolGame::sendCreatureShield(const Creature* creature)
 	writeToOutputBuffer(msg);
 }
 
+void ProtocolGame::sendCreatureType(uint32_t creatureId, uint8_t creatureType)
+{
+	NetworkMessage msg;
+	msg.AddByte(0x95);
+	msg.AddU32(creatureId);
+	msg.AddByte(creatureType);
+	writeToOutputBuffer(msg);
+}
+
 void ProtocolGame::sendCreatureSkull(const Creature* creature)
 {
 	if(g_game.getWorldType() != WORLD_TYPE_PVP)
@@ -3379,6 +3388,8 @@ void ProtocolGame::AddDistanceShoot(NetworkMessage& msg, const Position& from, c
 
 void ProtocolGame::AddCreature(NetworkMessage& msg, const Creature* creature, bool known, uint32_t remove)
 {
+	CreatureType_t creatureType = creature->getType();
+	const Player* otherPlayer = creature->getPlayer();
 	if(known)
 	{
 		msg.AddU16(0x62);
@@ -3389,7 +3400,7 @@ void ProtocolGame::AddCreature(NetworkMessage& msg, const Creature* creature, bo
 		msg.AddU16(0x61);
 		msg.AddU32(remove);
 		msg.AddU32(creature->getID());
-		msg.AddByte(creature->getType());
+		msg.AddByte(creatureType);
 		msg.AddString(creature->getName());
 	}
 
@@ -3417,6 +3428,30 @@ void ProtocolGame::AddCreature(NetworkMessage& msg, const Creature* creature, bo
 
 	if(!known)
 		msg.AddByte(player->getGuildEmblem(creature->getPlayer()));
+
+	if (creatureType == CREATURETYPE_MONSTER)
+	{
+		const Creature* master = creature->getMaster();
+		if (master)
+		{
+			const Player* masterPlayer = master->getPlayer();
+			if (masterPlayer)
+			{
+				if (masterPlayer == player)
+					creatureType = CREATURETYPE_SUMMON_OWN;
+				else
+					creatureType = CREATURETYPE_SUMMON_OTHERS;
+			}
+		}
+	}
+
+	msg.AddByte(creatureType); // Type (for summons)
+	msg.AddByte(0xFF); // MARK_UNMARKED
+
+	if (otherPlayer)
+		msg.AddU16(0x00); // Helpers
+	else
+		msg.AddU16(0x00);
 
 	msg.AddByte(player->canWalkthroughEx(creature) ? 0x00 : 0x01);
 }
@@ -3552,6 +3587,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage& msg,const Creature* creatur
 {
 	msg.AddByte(0x8C);
 	msg.AddU32(creature->getID());
+
 	if(creature->isHealthHidden())
 		msg.AddByte(0x00);
 	else

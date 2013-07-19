@@ -153,9 +153,7 @@ class NetworkMessage
 		void AddPosition(const Position &pos);
 		void AddItem(uint16_t id, uint8_t count);
 		void AddItem(const Item *item);
-		void AddItemId(const Item *item);
 		void AddItemId(uint16_t itemId);
-		void AddCreature(const Creature *creature, bool known, unsigned int remove);
 
 		int32_t getMessageLength() const { return m_MsgSize; }
 		void setMessageLength(int32_t newSize) { m_MsgSize = newSize; }

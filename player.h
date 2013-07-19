@@ -594,6 +594,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureWalkthrough(creature, walkthrough);}
 		void sendCreatureShield(const Creature* creature)
 			{if(client) client->sendCreatureShield(creature);}
+		void sendCreatureType(uint32_t creatureId, uint8_t creatureType)
+			{if(client) client->sendCreatureType(creatureId, creatureType);}
 		void sendSpellCooldown(uint8_t spellId, uint32_t time)
 			{if(client) client->sendSpellCooldown(spellId, time);}
 		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t time)

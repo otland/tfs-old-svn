@@ -22,13 +22,13 @@
 #define __OTSERV_DEFINITIONS_H__
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
-#define STATUS_SERVER_PROTOCOL "9.86"
+#define STATUS_SERVER_PROTOCOL "10.10"
 #define STATUS_SERVER_VERSION "0.5"
 #define STATUS_SERVER_DEVELOPERS "Tryller, Talaturen, Dalkon and Kornholijo"
 
-#define CLIENT_VERSION_MIN 972
-#define CLIENT_VERSION_MAX 978
-#define CLIENT_VERSION_STR "9.86"
+#define CLIENT_VERSION_MIN 1010
+#define CLIENT_VERSION_MAX 1010
+#define CLIENT_VERSION_STR "10.10"
 
 #ifdef _WIN32
 #ifndef WIN32

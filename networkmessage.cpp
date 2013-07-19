@@ -125,9 +125,10 @@ void NetworkMessage::AddPosition(const Position& pos)
 
 void NetworkMessage::AddItem(uint16_t id, uint8_t count)
 {
-	const ItemType &it = Item::items[id];
+	const ItemType& it = Item::items[id];
 
 	AddU16(it.clientId);
+	AddByte(0xFF);    // MARK_UNMARKED
 
 	if(it.stackable)
 		AddByte(count);
@@ -143,9 +144,10 @@ void NetworkMessage::AddItem(uint16_t id, uint8_t count)
 
 void NetworkMessage::AddItem(const Item* item)
 {
-	const ItemType &it = Item::items[item->getID()];
+	const ItemType& it = Item::items[item->getID()];
 
 	AddU16(it.clientId);
+	AddByte(0xFF);    // MARK_UNMARKED
 
 	if(it.stackable)
 		AddByte(std::min<uint16_t>(0xFF, item->getSubType()));
@@ -157,12 +159,6 @@ void NetworkMessage::AddItem(const Item* item)
 
 	if(it.isAnimation)
 		AddByte(0xFE); // random phase (0xFF for async)
-}
-
-void NetworkMessage::AddItemId(const Item *item)
-{
-	const ItemType &it = Item::items[item->getID()];
-	AddU16(it.clientId);
 }
 
 void NetworkMessage::AddItemId(uint16_t itemId)

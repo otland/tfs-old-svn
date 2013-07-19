@@ -5222,6 +5222,44 @@ void Game::updateCreatureSkull(Player* player)
 		(*it)->getPlayer()->sendCreatureSkull(player);
 }
 
+void Game::updateCreatureType(Creature* creature)
+{
+	const Player* masterPlayer = NULL;
+	uint32_t creatureId = creature->getID();
+	CreatureType_t creatureType = creature->getType();
+	if (creatureType == CREATURETYPE_MONSTER)
+	{
+		const Creature* master = creature->getMaster();
+		if (master)
+		{
+			masterPlayer = master->getPlayer();
+			if (masterPlayer)
+				creatureType = CREATURETYPE_SUMMON_OTHERS;
+		}
+	}
+
+	//send to clients
+	SpectatorVec list;
+	getSpectators(list, creature->getPosition(), true, true);
+
+	if (creatureType == CREATURETYPE_SUMMON_OTHERS)
+	{
+		for (SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
+		{
+			Player* player = (*it)->getPlayer();
+			if (masterPlayer == player)
+				player->sendCreatureType(creatureId, CREATURETYPE_SUMMON_OWN);
+			else
+				player->sendCreatureType(creatureId, creatureType);
+		}
+	}
+	else
+	{
+		for (SpectatorVec::const_iterator it = list.begin(), end = list.end(); it != end; ++it)
+			(*it)->getPlayer()->sendCreatureType(creatureId, creatureType);
+	}
+}
+
 void Game::updatePremium(Account& account)
 {
 	bool save = false;

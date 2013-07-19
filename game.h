@@ -491,6 +491,7 @@ class Game
 		void internalCreatureChangeVisible(Creature* creature, bool visible);
 		void changeLight(const Creature* creature);
 		void updateCreatureSkull(Player* player);
+		void updateCreatureType(Creature* creature);
 		void updateCreatureWalkthrough(Creature* creature);
 
 		void sendPublicSquare(Player* sender, SquareColor_t color);
