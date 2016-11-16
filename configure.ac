@@ -7,7 +7,7 @@ AM_CONFIG_HEADER([config.h])
 AC_PROG_CXX
 AC_LANG(C++)
 
-OPTIONAL_FLAGS=""
+OPTIONAL_FLAGS="-D__WAR_SYSTEM__"
 DEBUG_FLAGS="-O2 -fomit-frame-pointer"
 
 # check if we want server diag enabled
@@ -141,7 +141,7 @@ AC_CHECK_FUNCS([ceil floor ftime gethostbyname gethostname memset pow sqrt strca
 
 # check for xml2
 AM_PATH_XML2(2.6.5, , AC_MSG_ERROR([You need libxml2 >= 2.6.5 to compile theforgottenserver!]))
-LIBS="$LIBS $XML_LIBS"
+LIBS="$LIBS $XML_LIBS -lpthread"
 
 # check for zlib
 AC_CHECK_HEADERS([zlib.h], ,[AC_MSG_ERROR("zlib header not found.")])
@@ -208,8 +208,8 @@ if test "$luaJIT" = "yes"; then
 	])
 elif test "$luaJIT" = "no"; then
 	PKG_CHECK_MODULES(LUA, lua5.1 >= 5.1, , [
-		AC_CHECK_HEADERS([lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
-		AC_CHECK_LIB(lua, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
+		AC_CHECK_HEADERS([lua5.1/lua.hpp], , [AC_MSG_ERROR("Lua header not found.")])
+		AC_CHECK_LIB(lua5.1, main, , [AC_MSG_ERROR("Linking against Lua library failed.")])
 	])
 fi
 AC_SUBST(LUA_CFLAGS)
