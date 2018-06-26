@@ -5377,6 +5377,9 @@ bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 		return false;
 	}
 
+	if(playerId == invitedId)
+		return false;
+
 	Party* party = player->getParty();
 	if(!party)
 		party = new Party(player);
