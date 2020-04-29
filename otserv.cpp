@@ -545,11 +545,14 @@ void otserv(StringVec, ServiceManager* services)
 	std::clog << ">> Loading RSA key" << std::endl;
 	g_RSA = RSA_new();
 
-	BN_dec2bn(&g_RSA->p, g_config.getString(ConfigManager::RSA_PRIME1).c_str());
-	BN_dec2bn(&g_RSA->q, g_config.getString(ConfigManager::RSA_PRIME2).c_str());
-	BN_dec2bn(&g_RSA->d, g_config.getString(ConfigManager::RSA_PRIVATE).c_str());
-	BN_dec2bn(&g_RSA->n, g_config.getString(ConfigManager::RSA_MODULUS).c_str());
-	BN_dec2bn(&g_RSA->e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
+	BIGNUM *p, *q, *d, *n, *e;
+	BN_dec2bn(&p, g_config.getString(ConfigManager::RSA_PRIME1).c_str());
+	BN_dec2bn(&q, g_config.getString(ConfigManager::RSA_PRIME2).c_str());
+	BN_dec2bn(&d, g_config.getString(ConfigManager::RSA_PRIVATE).c_str());
+	BN_dec2bn(&n, g_config.getString(ConfigManager::RSA_MODULUS).c_str());
+	BN_dec2bn(&e, g_config.getString(ConfigManager::RSA_PUBLIC).c_str());
+	RSA_set0_key(g_RSA, n, e, d);
+	RSA_set0_factors(g_RSA, p, q);
 	// TODO: dmp1, dmq1, iqmp?
 	
 	// This check will verify keys set in config.lua
