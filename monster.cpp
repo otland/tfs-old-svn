@@ -179,7 +179,8 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 	}
 	else
 	{
-		bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
+		bool canSeeNewPos = isOnSameFloor(newPos) && canSee(newPos),
+			canSeeOldPos = isOnSameFloor(oldPos) && canSee(oldPos);
 		if(canSeeNewPos && !canSeeOldPos)
 			onCreatureEnter(const_cast<Creature*>(creature));
 		else if(!canSeeNewPos && canSeeOldPos)
@@ -210,7 +211,8 @@ void Monster::updateTargetList()
 
 	for(it = targetList.begin(); it != targetList.end();)
 	{
-		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition()))
+		if((*it)->getHealth() <= 0 || !canSee((*it)->getPosition())
+			|| !isOnSameFloor((*it)->getPosition()))
 		{
 			(*it)->unRef();
 			it = targetList.erase(it);
@@ -222,7 +224,7 @@ void Monster::updateTargetList()
 	const SpectatorVec& list = g_game.getSpectators(getPosition());
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
-		if((*it) != this && canSee((*it)->getPosition()))
+		if((*it) != this && isOnSameFloor((*it)->getPosition()) && canSee((*it)->getPosition()))
 			onCreatureFound(*it);
 	}
 }
@@ -255,7 +257,7 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 		}
 	}
 
-	if(isOpponent(creature))
+	if(isOpponent(creature) && isOnSameFloor(creature->getPosition()))
 	{
 		assert(creature != this);
 		if(std::find(targetList.begin(), targetList.end(), creature) == targetList.end())
@@ -306,6 +308,11 @@ bool Monster::isOpponent(const Creature* creature)
 	return (isSummon() && master->getPlayer() && creature != master) || ((creature->getPlayer()
 		&& !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) ||
 		(creature->getMaster() && creature->getPlayerMaster()));
+}
+
+bool Monster::isOnSameFloor(const Position& pos) const
+{
+	return pos.z == getPosition().z;
 }
 
 bool Monster::doTeleportToMaster()
@@ -491,7 +498,7 @@ BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32
 bool Monster::isTarget(Creature* creature)
 {
 	return (!creature->isRemoved() && creature->isAttackable() && creature->getZone() != ZONE_PROTECTION
-		&& canSeeCreature(creature) && creature->getPosition().z == getPosition().z);
+		&& canSeeCreature(creature) && isOnSameFloor(creature->getPosition()));
 }
 
 bool Monster::selectTarget(Creature* creature)

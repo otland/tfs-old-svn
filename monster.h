@@ -185,6 +185,7 @@ class Monster : public Creature
 
 		bool isFriend(const Creature* creature);
 		bool isOpponent(const Creature* creature);
+		bool isOnSameFloor(const Position& pos) const;
 
 		virtual uint64_t getLostExperience() const {return ((skillLoss ? mType->experience : 0));}
 		virtual void dropLoot(Container* corpse);
